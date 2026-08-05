@@ -1109,6 +1109,33 @@ main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 .guide-ul { margin: 0 0 18px; padding-left: 20px; }
 .guide-ul li { font-size: 15px; line-height: 1.8; color: var(--md-sys-color-on-surface-variant); margin-bottom: 7px; }
 .guide-ul li:last-child { margin-bottom: 0; }
+.guide-ol { margin: 0 0 18px; padding-left: 22px; }
+.guide-ol li { font-size: 15px; line-height: 1.75; color: var(--md-sys-color-on-surface-variant); margin-bottom: 9px; }
+.guide-ol li:last-child { margin-bottom: 0; }
+.guide-ol li strong, .guide-ul li strong { color: var(--md-sys-color-on-surface); }
+
+/* ── Personal Bible Study — the three training videos ── */
+.pbs-step { margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--md-sys-color-on-surface); }
+.pbs-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+.pbs-num {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px; letter-spacing: 0.16em; color: var(--devotion-gold);
+}
+.pbs-name {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--md-sys-color-on-surface);
+}
+.pbs-q {
+  font-family: 'IBM Plex Serif', Georgia, serif; font-style: italic;
+  font-size: 17px; line-height: 1.5; color: var(--md-sys-color-secondary);
+  margin: 0 0 16px;
+}
+.pbs-sub {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--md-sys-color-on-surface-variant); margin: 20px 0 10px;
+}
 
 .guide-section { margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--md-sys-color-on-surface); }
 .guide-section-label {
@@ -2981,10 +3008,19 @@ body[data-series="upperroom"] #section-home { background: #0e0c0b; }
 body[data-series="upperroom"] .home-hero-bg {
   background: radial-gradient(ellipse 90% 70% at 50% 34%, #2a1c12 0%, #150f0b 46%, #0b0908 100%);
 }
-body[data-series="upperroom"] .home-hero-bg .hero-slide { display: none; }
+/* The prints are already cream-on-black, so they need far less dimming than
+   the photography this filter was tuned for. */
+body[data-series="upperroom"] .home-hero-bg img {
+  filter: contrast(1.04) brightness(0.92) saturate(0.95);
+}
 body[data-series="upperroom"] .home-hero::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse 70% 55% at 50% 32%, rgba(0,0,0,0) 40%, rgba(6,5,4,0.75) 100%);
+  /* The linear pass clears the lower half so the letterpress headline always
+     sits on black, whatever print is showing — done here rather than baked into
+     the plates, which also have to fill a CTA band edge to edge. */
+  background:
+    linear-gradient(180deg, rgba(6,5,4,0) 40%, rgba(6,5,4,0.72) 58%, rgba(6,5,4,0.97) 74%),
+    radial-gradient(ellipse 70% 55% at 50% 32%, rgba(0,0,0,0) 40%, rgba(6,5,4,0.75) 100%);
 }
 body[data-series="upperroom"] .hero-eyebrow {
   color: #c9522f; letter-spacing: 0.26em;
@@ -3001,7 +3037,16 @@ body[data-series="upperroom"] .hero-logo-float { color: #efe2c6; opacity: 0.92; 
 
 /* CTA bands: dark cards, cream text, a single red accent (no imagery yet). */
 body[data-series="upperroom"] .cta-band { background: #100c0a; }
-body[data-series="upperroom"] .cta-bg { display: none; }
+body[data-series="upperroom"] .cta-bg img {
+  filter: contrast(1.02) brightness(0.62) saturate(0.92);
+}
+/* The inherited scrim is navy — warm it to the journal's black so the prints
+   sit in the same light as the rest of this home. */
+body[data-series="upperroom"] .cta-band::after {
+  background:
+    linear-gradient(180deg, rgba(8,7,6,0.84) 0%, rgba(8,7,6,0.40) 44%, rgba(8,7,6,0.92) 100%),
+    linear-gradient(90deg, rgba(8,7,6,0.58) 0%, transparent 74%);
+}
 body[data-series="upperroom"] .cta-band + .cta-band { border-top: 1px solid rgba(201,82,47,0.22); }
 body[data-series="upperroom"] .cta-eyebrow { color: #c9522f; }
 body[data-series="upperroom"] .cta-title {
@@ -3221,6 +3266,9 @@ body[data-series="upperroom"] .cta-btn:hover { background: #a02323; }
   </button>
   <button class="header-menu-item" onclick="closeHeaderMenu(); openGuide();" role="menuitem">
     <span class="material-symbols-rounded">help</span><span>How to Use This Guide</span>
+  </button>
+  <button class="header-menu-item" onclick="closeHeaderMenu(); openPbs();" role="menuitem">
+    <span class="material-symbols-rounded">school</span><span>Introduction to Personal Bible Study</span>
   </button>
   <button class="header-menu-item" id="spectraMenuItem" onclick="closeHeaderMenu(); openSpectra();" role="menuitem">
     <span class="material-symbols-rounded">palette</span><span>Spectra</span>
@@ -12934,7 +12982,10 @@ let _heroTimer = null;
 let _heroSeries = null;
 function heroImagesFor(id) {
   const s = (typeof SERIES !== 'undefined') ? SERIES[id] : null;
-  if (s && s.home) return null;                 // custom home theme handles its own background
+  // A series with its own home theme used to opt out of the slideshow entirely.
+  // It now only does so when it ships no art of its own — Upper Room supplies
+  // the twelve Spectra prints, and the CSS gradient stays as the backdrop.
+  if (s && s.home && !(s.hero && s.hero.length)) return null;
   const list = (s && s.hero && s.hero.length) ? s.hero
              : (SERIES.acts && SERIES.acts.hero ? SERIES.acts.hero : null);
   return (list && list.length) ? list : null;
@@ -12971,6 +13022,7 @@ function updateSeriesChrome() {
   const navLab = document.querySelector('.nav-tab[data-section="home"] .nav-label');
   if (navLab && s) navLab.textContent = s.nav || s.title;
   setHeroImages(activeSeries);
+  if (typeof setCtaImages === 'function') setCtaImages(activeSeries);
   // Only a series that ships Spectra artwork offers the Spectra page.
   const spItem = document.getElementById('spectraMenuItem');
   if (spItem) spItem.hidden = !(typeof spectraArt === 'function' && spectraArt());
@@ -13538,6 +13590,51 @@ function buildSpectraGallery() {
   }).join('');
 }
 
+/* The hero rotates every print; four of them back the CTA bands. The dark
+   plates are the same artwork rendered light-on-dark (gen_spectra_plates.py). */
+if (typeof SERIES !== 'undefined' && SERIES.upperroom) SERIES.upperroom.hero = ["assets/series/spectra/dark/wk01.jpg", "assets/series/spectra/dark/wk02.jpg", "assets/series/spectra/dark/wk03.jpg", "assets/series/spectra/dark/wk04.jpg", "assets/series/spectra/dark/wk05.jpg", "assets/series/spectra/dark/wk06.jpg", "assets/series/spectra/dark/wk07.jpg", "assets/series/spectra/dark/wk08.jpg", "assets/series/spectra/dark/wk09.jpg", "assets/series/spectra/dark/wk10.jpg", "assets/series/spectra/dark/wk11.jpg", "assets/series/spectra/dark/wk12.jpg"];
+
+/* CTA bands, in DOM order: Study, Insights, Devotion, Listen. */
+const CTA_ART_BY_SERIES = {
+  upperroom: [
+    ['assets/series/spectra/dark/wk03.jpg', 'Linocut print of the disciples gathered around Jesus'],
+    ['assets/series/spectra/dark/wk01.jpg', 'Linocut print of a lantern casting light into darkness'],
+    ['assets/series/spectra/dark/wk05.jpg', 'Linocut print of an olive tree with a dove'],
+    ['assets/series/spectra/dark/wk08.jpg', 'Linocut print of a dove carrying a flame']
+  ]
+};
+const CTA_ART_DEFAULT = [
+  ['assets/olive-grove.jpg', 'Wind moving through an olive grove'],
+  ['assets/far-mountain.jpg', 'A distant mountain across an open plain'],
+  ['assets/pale-hills.jpg', 'Wide pale hills under a streaked sky'],
+  ['assets/golden-scrub.jpg', 'Golden scrub and dunes blurred by motion']
+];
+function setCtaImages(id) {
+  const list = CTA_ART_BY_SERIES[id] || CTA_ART_DEFAULT;
+  document.querySelectorAll('.cta-band .cta-bg img').forEach(function (img, i) {
+    const a = list[i];
+    if (!a || img.getAttribute('src') === a[0]) return;
+    img.setAttribute('src', a[0]);
+    img.setAttribute('alt', a[1]);
+  });
+}
+
+/* ── Introduction to Personal Bible Study (header menu) ── */
+function openPbs() {
+  const el = document.getElementById('pbs-overlay');
+  if (!el) return;
+  const body = document.getElementById('pbs-body');
+  if (body) body.scrollTop = 0;
+  el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePbs() {
+  const el = document.getElementById('pbs-overlay');
+  if (!el) return;
+  el.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 function openSpectra() {
   const el = document.getElementById('spectra-overlay');
   if (!el) return;
@@ -13580,6 +13677,8 @@ document.addEventListener('keydown', function (e) {
   if (el && el.classList.contains('open')) closeGuide();
   const sp = document.getElementById('spectra-overlay');
   if (sp && sp.classList.contains('open')) closeSpectra();
+  const pb = document.getElementById('pbs-overlay');
+  if (pb && pb.classList.contains('open')) closePbs();
 });
 
 /* ── LISTEN — "Sermon Notes", one entry per study week ──────────────────────
@@ -14032,6 +14131,120 @@ function _onCtaScroll() {
      HOW TO USE THIS GUIDE  (header menu)
      Text is the study journal's own front matter, printed pages 10-11.
      ==================================================================== -->
+<!-- Introduction to Personal Bible Study — the Training Center's three
+     inductive-method videos. Reuses the guide overlay's slide mechanics. -->
+<div id="pbs-overlay" class="guide-overlay" role="dialog" aria-modal="true" aria-labelledby="pbs-title">
+  <div class="guide-app-bar">
+    <button class="icon-btn" onclick="closePbs()" aria-label="Back">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <span class="guide-app-bar-title">Personal Bible Study</span>
+  </div>
+
+  <div class="guide-body" id="pbs-body">
+    <div class="guide-inner">
+
+      <div class="guide-eyebrow">Training Center</div>
+      <h1 class="guide-display" id="pbs-title">Introduction to<br>Personal Bible Study</h1>
+
+      <p class="guide-lead">Fellowship&rsquo;s Personal Bible Study class is built on the Inductive Bible Study method. The goal of this approach is to let the biblical text speak for itself &mdash; to read carefully before deciding what a passage means, and to understand what it meant before asking what it asks of us.</p>
+
+      <p class="guide-p">The method moves through three steps, and each has a short training video below. They build on one another: interpretation rests on what you observed, and application rests on what the passage actually means.</p>
+
+      <div class="pbs-step">
+        <div class="pbs-head"><span class="pbs-num">01</span><span class="pbs-name">Observation</span></div>
+        <p class="pbs-q">What do I see?</p>
+        <p class="guide-p">This video introduces a Personal Bible Study training method focused on the inductive approach. The core philosophy is to engage with Scripture by first observing the details before attempting to interpret or apply them.</p>
+
+        <div class="pbs-sub">The three-step inductive process</div>
+        <ul class="guide-ul">
+          <li><strong>Observation</strong> (What do I see?): The focus of this video, where you gather the &ldquo;puzzle pieces&rdquo; of the passage.</li>
+          <li><strong>Interpretation</strong> (What does it mean?): Determining the meaning of the observed details.</li>
+          <li><strong>Application</strong> (How does it work in my life?): Applying the truth to your own life.</li>
+        </ul>
+
+        <div class="pbs-sub">How to practice observation</div>
+        <ol class="guide-ol">
+          <li><strong>Who:</strong> Identify the people mentioned.</li>
+          <li><strong>What:</strong> Look for actions, ideas, and objects.</li>
+          <li><strong>When:</strong> Note time markers (e.g. past, present, future).</li>
+          <li><strong>Where:</strong> Look for place markers.</li>
+          <li><strong>Why:</strong> Identify reasons given in the text.</li>
+          <li><strong>How:</strong> Determine the way things happen.</li>
+        </ol>
+
+        <a class="guide-link" href="https://www.youtube.com/watch?v=m4cNGwraQxo" target="_blank" rel="noopener">
+          <span class="material-symbols-rounded">play_circle</span>
+          <span class="guide-link-main">Watch the Observation training
+            <span class="guide-link-sub">youtube.com</span></span>
+          <span class="material-symbols-rounded">open_in_new</span>
+        </a>
+      </div>
+
+      <div class="pbs-step">
+        <div class="pbs-head"><span class="pbs-num">02</span><span class="pbs-name">Interpretation</span></div>
+        <p class="pbs-q">What does it mean?</p>
+        <p class="guide-p">This video provides a practical guide for personal Bible study, focusing on the process of interpretation to understand the meaning of the text. The speaker emphasizes that effective study involves three main steps:</p>
+
+        <ul class="guide-ul">
+          <li><strong>Observation:</strong> This is the foundation where you look at what is actually written on the page. Before interpreting, you must identify keywords and ask basic questions to understand the passage.</li>
+          <li><strong>Interpretation:</strong> This phase is about asking, &ldquo;What does this mean?&rdquo; It requires considering the context of communication, as words can change meaning based on how they are used. The speaker notes that interpretation should not be based on personal preference but on the author&rsquo;s original intent.</li>
+          <li><strong>Contextual Analysis:</strong> Understanding the genre (e.g. poetry, narrative, or history) is crucial. Furthermore, the speaker highlights the importance of historical and cultural context. Using the example of the Good Samaritan, the video illustrates how understanding the original cultural setting&mdash;where listeners would expect a priest and Levite to help, but a Samaritan to be the villain&mdash;completely changes the significance of Jesus&rsquo;s teaching on who a &ldquo;neighbor&rdquo; is.</li>
+        </ul>
+
+        <a class="guide-link" href="https://www.youtube.com/watch?v=ZM0_tokC-gc" target="_blank" rel="noopener">
+          <span class="material-symbols-rounded">play_circle</span>
+          <span class="guide-link-main">Watch the Interpretation training
+            <span class="guide-link-sub">youtube.com</span></span>
+          <span class="material-symbols-rounded">open_in_new</span>
+        </a>
+      </div>
+
+      <div class="pbs-step">
+        <div class="pbs-head"><span class="pbs-num">03</span><span class="pbs-name">Application</span></div>
+        <p class="pbs-q">How does it work in my life?</p>
+        <p class="guide-p">This video completes the inductive method by turning from what a passage means to what it asks of the reader. Observation gathers what is on the page and interpretation establishes what it meant to its first audience; application asks how that same truth should shape a life today. The emphasis is that the goal of study is not merely information, but transformation.</p>
+
+        <div class="pbs-sub">How to practice application</div>
+        <ol class="guide-ol">
+          <li><strong>Build on interpretation:</strong> A faithful application grows out of what the text actually meant &mdash; it never works around that step to reach a preferred conclusion.</li>
+          <li><strong>Form a biblical principle:</strong> State the timeless truth behind the passage &mdash; something true for all believers in all times, not only for the original situation.</li>
+          <li><strong>Bring it close to home:</strong> Ask where that principle touches your own relationships, work, habits, and attitudes this week.</li>
+          <li><strong>Respond in prayer:</strong> A helpful prayer here is, &ldquo;Lord, how do You want me to respond to the truths You have shown me in this passage?&rdquo;</li>
+          <li><strong>Choose one concrete step:</strong> Vague resolve fades. Name a specific, doable response, and return to the passage to see how it went.</li>
+        </ol>
+
+        <a class="guide-link" href="https://www.youtube.com/watch?v=3btbE4ks-Wc" target="_blank" rel="noopener">
+          <span class="material-symbols-rounded">play_circle</span>
+          <span class="guide-link-main">Watch the Application training
+            <span class="guide-link-sub">youtube.com</span></span>
+          <span class="material-symbols-rounded">open_in_new</span>
+        </a>
+      </div>
+
+      <div class="guide-panel">
+        <div class="guide-section-label">Go further</div>
+        <p class="guide-p">The Training Center offers Personal Bible Study as a class, which goes much deeper into this method than three short videos can. If you have not yet taken it, we encourage you to do so.</p>
+        <a class="guide-link" href="https://trainingcenternwa.org/events" target="_blank" rel="noopener">
+          <span class="material-symbols-rounded">event</span>
+          <span class="guide-link-main">Sign up for Personal Bible Study
+            <span class="guide-link-sub">trainingcenternwa.org/events</span></span>
+          <span class="material-symbols-rounded">open_in_new</span>
+        </a>
+        <a class="guide-link" href="mailto:training@fellowshipnwa.org">
+          <span class="material-symbols-rounded">mail</span>
+          <span class="guide-link-main">Contact the Training Center
+            <span class="guide-link-sub">training@fellowshipnwa.org</span></span>
+          <span class="material-symbols-rounded">open_in_new</span>
+        </a>
+      </div>
+
+      <p class="guide-blessing">Observation without interpretation stays flat; interpretation without application stays theoretical. The three together are how a passage gets from the page into a life.</p>
+
+    </div>
+  </div>
+</div>
+
 <!-- Spectra — the artwork of this study (header menu).
      Reuses the guide overlay's slide mechanics and front-matter typography. -->
 <div id="spectra-overlay" class="guide-overlay" role="dialog" aria-modal="true" aria-labelledby="spectra-title">
