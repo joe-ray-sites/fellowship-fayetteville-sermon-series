@@ -1,11 +1,11 @@
 {
   "name": "Fellowship Fayetteville",
   "short_name": "Fellowship",
-  "description": "Fellowship Fayetteville \u2014 a study of Acts.",
+  "description": "Fellowship Fayetteville — In the Upper Room with Jesus.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#14180F",
-  "theme_color": "#14180F",
+  "background_color": "#0E0C0A",
+  "theme_color": "#0E0C0A",
   "icons": [
     {
       "src": "assets/icon-192.png",
