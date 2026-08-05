@@ -11,26 +11,30 @@
 <style>
 /* ── M3 Color Tokens ── */
 :root {
-  --md-sys-color-primary: #A3CE8D;
-  --md-sys-color-on-primary: #172B0D;
-  --md-sys-color-primary-container: #325322;
+  --md-sys-color-primary: #E0705A;
+  --md-sys-color-on-primary: #2E0A05;
+  --md-sys-color-primary-container: #5A1410;
   --md-sys-color-secondary: #E0C27E;
   --md-sys-color-on-secondary: #3A2C0A;
   --md-sys-color-secondary-container: #5A4718;
-  --md-sys-color-tertiary: #94BD7F;
-  --md-sys-color-background: #14180F;
-  --md-sys-color-on-background: #E7EADD;
-  --md-sys-color-surface: #1C2117;
-  --md-sys-color-surface-variant: #272D1F;
-  --md-sys-color-surface-container: #20261A;
-  --md-sys-color-on-surface: #E7EADD;
-  --md-sys-color-on-surface-variant: #A9B197;
-  --md-sys-color-outline: #8C987C;
-  --md-sys-color-outline-variant: #333A29;
+  --md-sys-color-tertiary: #D89A86;
+  --md-sys-color-background: #0E0C0A;
+  --md-sys-color-on-background: #F3EADA;
+  --md-sys-color-surface: #17140F;
+  --md-sys-color-surface-variant: #221E17;
+  --md-sys-color-surface-container: #1B1712;
+  --md-sys-color-on-surface: #F3EADA;
+  --md-sys-color-on-surface-variant: #B3A895;
+  --md-sys-color-outline: #8A7F6E;
+  --md-sys-color-outline-variant: #2E2920;
   --md-sys-color-error: #E5796B;
-  --md-sys-color-nav-bg: #14180F;
-  --md-sys-color-nav-indicator: #325322;
-  --md-sys-color-shadow: rgba(0,0,0,0.5);
+  --md-sys-color-nav-bg: #0E0C0A;
+  --md-sys-color-nav-indicator: #4A1512;
+  --md-sys-color-shadow: rgba(0,0,0,0.55);
+  --journal-red: #960000;
+  --journal-red-hover: #7B0000;
+  --journal-red-on: #F9F1E1;
+  --journal-red-edge: #D4553F;
   --devotion-gold: #DCC07E;
   --devotion-gold-strong: #EBD49A;
   --devotion-gold-bg: rgba(220,192,126,0.12);
@@ -41,34 +45,38 @@
   --md-sys-elevation-3: 0 6px 12px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.3);
 }
 [data-theme="light"] {
-  --md-sys-color-primary: #295115;
-  --md-sys-color-on-primary: #FFFFFF;
-  --md-sys-color-primary-container: #D7E7D0;
+  --md-sys-color-primary: #960000;
+  --md-sys-color-on-primary: #F9F1E1;
+  --md-sys-color-primary-container: #F1DCD6;
   --md-sys-color-secondary: #8A6A22;
   --md-sys-color-on-secondary: #FFFFFF;
   --md-sys-color-secondary-container: #F2E9D3;
-  --md-sys-color-tertiary: #4E713D;
-  --md-sys-color-background: #EEF1F1;
-  --md-sys-color-on-background: #1A2013;
-  --md-sys-color-surface: #FFFFFF;
-  --md-sys-color-surface-variant: #E3E7E0;
-  --md-sys-color-surface-container: #F5F7F5;
-  --md-sys-color-on-surface: #1A2013;
-  --md-sys-color-on-surface-variant: #5A6350;
-  --md-sys-color-outline: #6B755C;
-  --md-sys-color-outline-variant: #D3D8C9;
+  --md-sys-color-tertiary: #7A3325;
+  --md-sys-color-background: #F2EADA;
+  --md-sys-color-on-background: #14120E;
+  --md-sys-color-surface: #FCF7EC;
+  --md-sys-color-surface-variant: #E8DFCB;
+  --md-sys-color-surface-container: #F7F0E1;
+  --md-sys-color-on-surface: #14120E;
+  --md-sys-color-on-surface-variant: #5C5346;
+  --md-sys-color-outline: #6E6355;
+  --md-sys-color-outline-variant: #DED4C0;
   --md-sys-color-error: #B3261E;
-  --md-sys-color-nav-bg: #FFFFFF;
-  --md-sys-color-nav-indicator: #D7E7D0;
-  --md-sys-color-shadow: rgba(26,32,19,0.15);
+  --md-sys-color-nav-bg: #FCF7EC;
+  --md-sys-color-nav-indicator: #F1DAD3;
+  --md-sys-color-shadow: rgba(20,18,14,0.16);
+  --journal-red: #960000;
+  --journal-red-hover: #7B0000;
+  --journal-red-on: #F9F1E1;
+  --journal-red-edge: transparent;
   --devotion-gold: #8A6A22;
   --devotion-gold-strong: #6E5318;
   --devotion-gold-bg: rgba(176,138,60,0.13);
   --devotion-gold-bg-2: rgba(176,138,60,0.07);
   --devotion-gold-border: #B08A3C;
-  --md-sys-elevation-1: 0 1px 3px rgba(26,32,19,0.10), 0 1px 2px rgba(26,32,19,0.06);
-  --md-sys-elevation-2: 0 3px 6px rgba(26,32,19,0.10), 0 2px 4px rgba(26,32,19,0.06);
-  --md-sys-elevation-3: 0 6px 12px rgba(26,32,19,0.10), 0 4px 8px rgba(26,32,19,0.06);
+  --md-sys-elevation-1: 0 1px 3px rgba(20,18,14,0.10), 0 1px 2px rgba(20,18,14,0.06);
+  --md-sys-elevation-2: 0 3px 6px rgba(20,18,14,0.10), 0 2px 4px rgba(20,18,14,0.06);
+  --md-sys-elevation-3: 0 6px 12px rgba(20,18,14,0.10), 0 4px 8px rgba(20,18,14,0.06);
 }
 /* ── Reset & Base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -694,9 +702,9 @@ main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
   align-self: flex-start;
   font-family: inherit;
   font-size: 13px; font-weight: 700; letter-spacing: 0.03em;
-  color: #1A2013;
-  background: #D9BE78;
-  border: none; cursor: pointer;
+  color: var(--journal-red-on);
+  background: var(--journal-red);
+  border: 1px solid var(--journal-red-edge); cursor: pointer;
   padding: 13px 22px;
   border-radius: 30px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.38);
@@ -3054,10 +3062,7 @@ body[data-series="upperroom"] .cta-title {
   font-weight: 400; text-transform: none; color: #f3e8d0;
 }
 body[data-series="upperroom"] .cta-text { color: #cdbfa6; }
-body[data-series="upperroom"] .cta-btn {
-  background: #8f1d1d; color: #f7edd8; border-color: #8f1d1d;
-}
-body[data-series="upperroom"] .cta-btn:hover { background: #a02323; }
+body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hover); }
 
 /* ── SPECTRA — the study's own linocut artwork ───────────────────────────────
    The prints are exported already sitting on the journal's cream paper (the
