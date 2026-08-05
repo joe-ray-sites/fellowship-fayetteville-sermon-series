@@ -3013,6 +3013,80 @@ body[data-series="upperroom"] .cta-btn {
   background: #8f1d1d; color: #f7edd8; border-color: #8f1d1d;
 }
 body[data-series="upperroom"] .cta-btn:hover { background: #a02323; }
+
+/* ── SPECTRA — the study's own linocut artwork ───────────────────────────────
+   The prints are exported already sitting on the journal's cream paper (the
+   art has two polarities — some are white ink on a solid black block, some are
+   open black line art — and one cream ground reproduces both as printed), so
+   the plate carries the same cream in either app theme and the image edge
+   disappears into it. */
+.sp-plate {
+  margin: 0; padding: 12px; border-radius: 14px;
+  background: #F3F0E5;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+.sp-plate img { display: block; width: 100%; height: auto; border-radius: 6px; }
+.sp-verse {
+  margin: 16px 0 0; padding: 0 0 0 14px;
+  border-left: 2px solid var(--devotion-gold);
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-size: 15px; line-height: 1.66; font-style: italic;
+  color: var(--md-sys-color-on-surface);
+}
+.sp-meta {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px;
+  margin-top: 10px;
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.sp-ref { color: var(--devotion-gold); }
+.sp-artist { color: var(--md-sys-color-on-surface-variant); }
+.sp-artist::before { content: '\2014\00a0'; }
+
+/* gallery inside the Spectra overlay */
+.sp-piece { margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--md-sys-color-outline-variant); }
+.sp-piece:first-child { margin-top: 10px; padding-top: 0; border-top: none; }
+.sp-piece-head {
+  display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px;
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+.sp-piece-wk { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--devotion-gold); }
+.sp-piece-title { font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--md-sys-color-on-surface); }
+.sp-vignette { max-width: 300px; margin: 22px auto 0; }
+.sp-vignette img { display: block; width: 100%; height: auto; }
+
+/* the journal's three colours, shown as they are described */
+.sp-swatches { display: flex; gap: 10px; margin: 18px 0 4px; }
+.sp-swatch { flex: 1; border-radius: 10px; overflow: hidden; border: 1px solid var(--md-sys-color-outline-variant); }
+.sp-swatch-chip { height: 62px; }
+.sp-swatch-name {
+  padding: 8px 10px; background: var(--md-sys-color-surface);
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--md-sys-color-on-surface-variant);
+}
+/* letterpress specimen — the guide's own display face */
+.sp-specimen {
+  margin: 18px 0 4px; padding: 20px 18px; border-radius: 12px;
+  background: #14120E; color: #F3F0E5; text-align: center;
+}
+.sp-specimen-aa { font-family: 'IM Fell English', Georgia, serif; font-size: 46px; line-height: 1; }
+.sp-specimen-set {
+  margin-top: 10px; font-family: 'IM Fell English', Georgia, serif;
+  font-size: 13px; letter-spacing: 0.06em; word-break: break-word; opacity: 0.85;
+}
+.sp-artist-block { margin-top: 24px; }
+.sp-artist-name {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--md-sys-color-on-surface); margin-bottom: 10px;
+}
+.sp-artist-works {
+  margin-top: 8px;
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--devotion-gold);
+}
 </style>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAE90lEQVR4nOWa+1OUVRjH9z/opnJnQdS01EjkIiw3AUFF04wUL0M10zQ5WKbGJXWacSyTXDdyuk3T1GQgIinmhVtN1x8T8OWmxkJA5sguU47cB9i+dJrTmffdd/dlOfTusWeeH+A9zznn+bzn9px3H4NDRVpam1/N3xOXEB1gnDPL9z5dNDDEJz5pReGB/GvX29T8NCgfdXV3bc7epJfTarplW1Z3T5d7gLPnKoxz/XV316kawwLOX6hUBZiYmDh2/KjuXrpVS7HZOcChw6/r7pxGfefd43KAsvJS3d2akmKq/wtgtbYHhfrq7tOUNDjUr6Oz4x+AHc9s1d0hDzTn2W2TAFfqf9bdFY9Vkq4aCvbncWkrY22qb+BDGo2T0+K5dLr/YIFhhSmSS1s9Pd23e2/v2r3TtRnOI5zxd+78yaVTBAoG/+DZvADItlBSenKO/wNObbD94bSBDS8AhDkGLg2xAJAPP3pfaYDhpga8AKAzAjA+Pp6yKpEtNSXGjI6OCgMAqTx/li09dbqELRUAYGhoyCfgQVI02+/+vr4+bwdQhux0f1sWuURW5I0AtXXVMi9xFyFFaRnJAgDkF+5TA1i7Pl0AAGzJ7e2/CAwADY9Y3HatVWAAKM51s6UIW5CoAEThOoJ1gQGgcxcEB4b4qAHY7Lb/AgARskObIA6tqa3KfelF6jSrSoDvvv+WNUCtwgP52IibmqXOXztlmvnEas9HQGqSNDIQQX+rM9PcAuzMfYGWPrJ0QWtbi1qDGCunL0UrAMJ3EgBrl5GRka07NrsAuHnzN7+gWaQIfzQ2NrhobV/eK55PIaLFJyxTAoDc7b8bY1ruFAB4GzZl0qK3zW+5aOdMxelprQGqRceOsMGwFqn7plYJADDcxOnzxJVxw8PDTqsjIP/k04/pQE0XAJqUYqr4srx/oF8jACbe/EUhpG76mhT8e/HShYiopezUx1xSVhwYGMCLVy6k6QIQRYQcFbts5aoEt5qUakIUTWrhhrnw0TBZU6Hzg5S1QKj9y4AnAF6o/zMArKrl0Y+t27Dmyaz1rBrDAmSWSx5fxE4hHEayKkrFWo+MCaf3OM4AG59aV/nVucHBQeWys3ZY5y00UsvY+Kjqmst4HpcQTZ5gAYyNjWlc/dipys+U0TiKAwAC/c9PfqbWH/ZBU2IMNX7u+Rzs9KSIdeJy1UWNALTZw28e4gCA0a+qvuSipyNH36DGWVs2sm+aBcDc0L4FU7EUm6cLgBjLRQf1DVfoWYOI5dat39lS2TTYnpNNB0ej4PTI3v605wDwSfY5hJXmliYcRtR4995dMgPlPMYy7ep28kOdC5Gkq54DIJxGpCXThsZ6RM55BXtlQeKPP/3gFoC8lJf35NZ9XdNr6/1DmyAI8HwKaVf0pAYQMi8w7OFgXh3NFIBy9NkrpdXaTndVIQEcf39sRPCsJcD0UgAiLa3N4RGLBQaA3LhxnWP+hQ4AEGxiYgNgIxYAgM71hORYWRFWgrcD2O12Gk5j55HdfQUAKDn1BVuKC7FIAAjacCtgS8m9XhiA1w4WKA3e++DEjADw+qGbeIbXbLYUOTXAXbG0rIQvwOQP3bxSDeCW1CThauvaDKGozW7jBTCZasAr2SMtI1mjJcY8NT2JS6eTyR7Cp9s4RE94ctwDKWcO0ZP+iIiddum4BxJfiQicekxF7ORvKqKk3/8FohI5J8sGm6QAAAAASUVORK5CYII=">
 <link rel="manifest" href="manifest.json">
@@ -3147,6 +3221,9 @@ body[data-series="upperroom"] .cta-btn:hover { background: #a02323; }
   </button>
   <button class="header-menu-item" onclick="closeHeaderMenu(); openGuide();" role="menuitem">
     <span class="material-symbols-rounded">help</span><span>How to Use This Guide</span>
+  </button>
+  <button class="header-menu-item" id="spectraMenuItem" onclick="closeHeaderMenu(); openSpectra();" role="menuitem">
+    <span class="material-symbols-rounded">palette</span><span>Spectra</span>
   </button>
   <button class="header-menu-item" onclick="closeHeaderMenu(); openShelf();" role="menuitem">
     <span class="material-symbols-rounded">auto_stories</span><span>Past Sermon Series</span>
@@ -12894,6 +12971,9 @@ function updateSeriesChrome() {
   const navLab = document.querySelector('.nav-tab[data-section="home"] .nav-label');
   if (navLab && s) navLab.textContent = s.nav || s.title;
   setHeroImages(activeSeries);
+  // Only a series that ships Spectra artwork offers the Spectra page.
+  const spItem = document.getElementById('spectraMenuItem');
+  if (spItem) spItem.hidden = !(typeof spectraArt === 'function' && spectraArt());
   document.body.dataset.series = activeSeries;
 }
 
@@ -13127,6 +13207,25 @@ function renderWeekDetail(n) {
             <span class="cta-label">${esc(w.insight)}</span>
             <span class="material-symbols-rounded cta-arrow">arrow_forward</span>
           </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // The week's linocut print, shown here as well as on the Spectra page — the
+  // artwork belongs with the week, not one tap away behind a link.
+  const sp = (typeof spectraFor === 'function') ? spectraFor(n) : null;
+  if (sp) {
+    html += `
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-content">
+          <div class="wk-head"><span class="material-symbols-rounded wk-head-icon">imagesmode</span><span>Visual Inspiration</span></div>
+          <div class="wk-sub">The linocut print carved for this week by our Spectra artists.</div>
+          <figure class="sp-plate" style="margin-top:14px;">
+            <img src="${esc(sp.img)}" alt="Linocut print for week ${n}" loading="lazy">
+          </figure>
+          <blockquote class="sp-verse">${esc(sp.verse)}</blockquote>
+          <div class="sp-meta"><span class="sp-ref">${esc(sp.ref)}</span>${sp.artist ? `<span class="sp-artist">${esc(sp.artist)}</span>` : ''}</div>
         </div>
       </div>
     `;
@@ -13408,6 +13507,53 @@ function openDiscussion(n) {
   });
 }
 
+/* ── SPECTRA — the artwork made for this study ───────────────────────────────
+   The twelve linocut prints, one per week, extracted from the journal
+   (extract_spectra.py). They appear in two places by design: this overlay, and
+   a per-week "Visual Inspiration" card on the Study tab.
+   Series-aware by lookup rather than by a bindSeries binding — only the Upper
+   Room journal ships Spectra art, and a series without a key simply has none. */
+const SPECTRA_BY_SERIES = { upperroom: [{"wk": 1, "title": "Overview of John", "img": "assets/series/spectra/wk01.png", "ref": "John 12:46", "artist": "Jennifer Bowman", "verse": "“I have come into the world as a light, so that no one who believes in me should stay in darkness.”"}, {"wk": 2, "title": "Jesus Washes", "img": "assets/series/spectra/wk02.png", "ref": "John 13:16", "artist": "", "verse": "“Very truly I tell you, no servant is greater than his master, nor is a messenger greater than the one who sent him.”"}, {"wk": 3, "title": "Jesus Commands", "img": "assets/series/spectra/wk03.png", "ref": "John 13:35", "artist": "Craig Ford", "verse": "“By this everyone will know that you are my disciples, if you love one another.”"}, {"wk": 4, "title": "Jesus Shows", "img": "assets/series/spectra/wk04.png", "ref": "John 14:6", "artist": "Craig Ford", "verse": "Jesus answered, “I am the way and the truth and the life. No one comes to the Father except through me.”"}, {"wk": 5, "title": "Jesus Promises", "img": "assets/series/spectra/wk05.png", "ref": "John 14:27", "artist": "", "verse": "“Peace I leave with you; my peace I give you. I do not give to you as the world gives. Do not let your hearts be troubled and do not be afraid.”"}, {"wk": 6, "title": "Jesus Loves", "img": "assets/series/spectra/wk06.png", "ref": "John 15:5", "artist": "Jennifer Bowman", "verse": "“I am the vine; you are the branches. If you remain in me and I in you, you will bear much fruit; apart from me you can do nothing.”"}, {"wk": 7, "title": "Jesus Endures", "img": "assets/series/spectra/wk07.png", "ref": "John 15:19", "artist": "", "verse": "“If you belonged to the world, it would love you as its own. As it is, you do not belong to the world, but I have chosen you out of the world. That is why the world hates you.”"}, {"wk": 8, "title": "Jesus Provides", "img": "assets/series/spectra/wk08.png", "ref": "John 16:13", "artist": "Craig Ford", "verse": "“But when he, the Spirit of truth, comes, he will guide you into all the truth. He will not speak on his own; he will speak only what he hears, and he will tell you what is yet to come.”"}, {"wk": 9, "title": "Jesus Gives", "img": "assets/series/spectra/wk09.png", "ref": "John 16:24", "artist": "", "verse": "“Until now you have not asked for anything in my name. Ask and you will receive, and your joy will be complete.”"}, {"wk": 10, "title": "Jesus Overcomes", "img": "assets/series/spectra/wk10.png", "ref": "John 16:33", "artist": "Jennifer Bowman", "verse": "“I have told you these things, so that in me you may have peace. In this world you will have trouble. But take heart! I have overcome the world.”"}, {"wk": 11, "title": "Jesus Prays", "img": "assets/series/spectra/wk11.png", "ref": "John 17:3", "artist": "", "verse": "“Now this is eternal life: that they know you, the only true God, and Jesus Christ, whom you have sent.”"}, {"wk": 12, "title": "Jesus Unites", "img": "assets/series/spectra/wk12.png", "ref": "John 17:20", "artist": "Craig Ford", "verse": "“My prayer is not for them alone. I pray also for those who will believe in me through their message...”"}] };
+
+function spectraArt() { return SPECTRA_BY_SERIES[activeSeries] || null; }
+function spectraFor(wk) {
+  const a = spectraArt();
+  return a ? (a.find(function (x) { return x.wk === wk; }) || null) : null;
+}
+
+function buildSpectraGallery() {
+  const box = document.getElementById('spectraGallery');
+  const a = spectraArt();
+  if (!box || !a) return;
+  box.innerHTML = a.map(function (p) {
+    return '<figure class="sp-piece">'
+      + '<div class="sp-piece-head"><span class="sp-piece-wk">Week ' + p.wk + '</span>'
+      + '<span class="sp-piece-title">' + esc(p.title) + '</span></div>'
+      + '<div class="sp-plate"><img src="' + esc(p.img) + '" alt="Linocut print for week '
+      + p.wk + '" loading="lazy"></div>'
+      + '<blockquote class="sp-verse">' + esc(p.verse) + '</blockquote>'
+      + '<figcaption class="sp-meta"><span class="sp-ref">' + esc(p.ref) + '</span>'
+      + (p.artist ? '<span class="sp-artist">' + esc(p.artist) + '</span>' : '')
+      + '</figcaption></figure>';
+  }).join('');
+}
+
+function openSpectra() {
+  const el = document.getElementById('spectra-overlay');
+  if (!el) return;
+  buildSpectraGallery();
+  const body = document.getElementById('spectra-body');
+  if (body) body.scrollTop = 0;
+  el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSpectra() {
+  const el = document.getElementById('spectra-overlay');
+  if (!el) return;
+  el.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 /* ── How to Use This Guide (header menu) ── */
 function openGuide() {
   const el = document.getElementById('guide-overlay');
@@ -13432,6 +13578,8 @@ document.addEventListener('keydown', function (e) {
   if (e.key !== 'Escape') return;
   const el = document.getElementById('guide-overlay');
   if (el && el.classList.contains('open')) closeGuide();
+  const sp = document.getElementById('spectra-overlay');
+  if (sp && sp.classList.contains('open')) closeSpectra();
 });
 
 /* ── LISTEN — "Sermon Notes", one entry per study week ──────────────────────
@@ -13884,6 +14032,101 @@ function _onCtaScroll() {
      HOW TO USE THIS GUIDE  (header menu)
      Text is the study journal's own front matter, printed pages 10-11.
      ==================================================================== -->
+<!-- Spectra — the artwork of this study (header menu).
+     Reuses the guide overlay's slide mechanics and front-matter typography. -->
+<div id="spectra-overlay" class="guide-overlay" role="dialog" aria-modal="true" aria-labelledby="spectra-title">
+  <div class="guide-app-bar">
+    <button class="icon-btn" onclick="closeSpectra()" aria-label="Back">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <span class="guide-app-bar-title">Spectra &nbsp;&middot;&nbsp; Artwork</span>
+  </div>
+
+  <div class="guide-body" id="spectra-body">
+    <div class="guide-inner">
+
+      <div class="guide-eyebrow">The art of this study</div>
+      <h1 class="guide-display" id="spectra-title">Spectra<br>Artists</h1>
+
+      <p class="guide-lead">This book was made in collaboration with artists in our Fellowship congregations. Thank you for partnering with us and using your time and talents to bring this study to life.</p>
+
+      <div class="guide-section">
+        <div class="guide-section-label">An intimate evening with Jesus</div>
+        <p class="guide-p">The design of this study guide aims to capture the intimate, personal, emotional, and authentic atmosphere of Jesus&rsquo; last night before crucifixion. On this evening with His disciples, He tells of the hope to come and speaks comfort, prayer, and instruction over them. Despite these encouragements, He also tells them He will soon leave. The disciples wrestle with the evident hope and comfort in Jesus&rsquo; words and fixate on the sobering statement that their Lord and Savior is leaving.</p>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-label">Linocut printmaking</div>
+        <p class="guide-p">To illustrate this encounter, printmaking was used as the artistic medium for this study. In this timeless artistic practice, the artist carves a design into the block and impresses it onto paper. Each piece was carved by hand and is completely unique with subtle imperfections.</p>
+        <p class="guide-p">Just as the block impresses its design onto paper, Jesus impresses His image onto believers, forming us more into His likeness. Created in the image of God, believers reflect the original design, even through imperfect prints.</p>
+        <div class="sp-vignette"><img src="assets/series/spectra/printmaking.png" alt="Linocut vignette of figs on a plate" loading="lazy"></div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-label">Colors</div>
+        <p class="guide-p">The stripped-back design cultivates the stillness and intimacy of this special night. The visual darkness sets us in the story alongside the disciples, listening to Jesus speak through the lamplit room. The stark contrast of the dark and light represents the emotional tension of hope and sorrow in the disciples.</p>
+        <p class="guide-p">Traditional red-letter Bibles emphasize Christ as the central character in Scripture by marking the words of Jesus in red. These chapters in John&rsquo;s gospel are mostly red, recording His parting words to the disciples before His death. Red also represents His blood that would be shed mere hours later. This symbolism is reflected in the book, utilizing only red to contrast the black and white artwork.</p>
+        <div class="sp-swatches">
+          <div class="sp-swatch"><div class="sp-swatch-chip" style="background:#9E1B22"></div><div class="sp-swatch-name">Red</div></div>
+          <div class="sp-swatch"><div class="sp-swatch-chip" style="background:#F3F0E5"></div><div class="sp-swatch-name">Cream</div></div>
+          <div class="sp-swatch"><div class="sp-swatch-chip" style="background:#14120E"></div><div class="sp-swatch-name">Black</div></div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-label">Typography</div>
+        <p class="guide-p">The header type is inspired by letterpress to integrate the authenticity of the style into the typography. This typeface enhances the intentional and personal feel of the book, incorporating the character, history, and uniqueness of letterpress type.</p>
+        <div class="sp-specimen">
+          <div class="sp-specimen-aa">Aa</div>
+          <div class="sp-specimen-set">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz</div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-label">The artists</div>
+
+        <div class="sp-artist-block">
+          <div class="sp-artist-name">Craig Ford</div>
+          <p class="guide-p">&ldquo;For this series, I made imagery that blends and contrasts our physical world with my visual interpretation of Jesus Christ&rsquo;s divinity and duality of being God in the flesh&mdash;including imagery of the Father and Holy Spirit&rsquo;s power, presence, and otherworldliness. My work portrays the range between wide-spanning spiritual imagery and intimate encounters with Christ. The dualities of God and man, dark and light, wide-spanning and intimate are beautifully embodied by the process of relief printmaking used to create this series. My hope and prayer is that God uses this imagery to stir hearts and captivate minds and that viewers will find at least one image that resonates with them deeply.&rdquo;</p>
+          <div class="sp-artist-works">Weeks 3 &middot; 4 &middot; 8 &middot; 12</div>
+        </div>
+
+        <div class="sp-artist-block">
+          <div class="sp-artist-name">Jennifer Bowman</div>
+          <p class="guide-p">&ldquo;In these prints, I kept returning to the idea of God&rsquo;s presence as the place where we find peace, life, and direction. I represented God&rsquo;s presence through light: the lantern casts His light and love into darkness, and in the stormy ocean, that same light becomes a guide, not removing the troubles of the world but offering calm and direction when our focus stays on Him. In the vine print, the branches that remain in Him flourish and bear fruit, while those that are apart from Him become dry and brittle. Through this process, I felt more connected to these verses, not just recalling their meaning, but spending time with them and feeling what they reveal about life in Christ.&rdquo;</p>
+          <div class="sp-artist-works">Weeks 1 &middot; 6 &middot; 10</div>
+        </div>
+
+        <a class="guide-link" href="https://fellowshipnwa.org/spectra" target="_blank" rel="noopener">
+          <span class="material-symbols-rounded">palette</span>
+          <span class="guide-link-main">More about Spectra
+            <span class="guide-link-sub">fellowshipnwa.org/spectra</span></span>
+          <span class="material-symbols-rounded">open_in_new</span>
+        </a>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-label">The prints</div>
+        <p class="guide-p">One print was carved for each week of the study, printed opposite that week&rsquo;s memory verse. You will also find each one on its own week in the Study tab.</p>
+        <div id="spectraGallery"></div>
+      </div>
+
+      <p class="guide-blessing">We hope and pray that the artwork of this study serves as a reflection of Christ, stirring your affection for who God is.</p>
+
+      <div class="guide-section">
+        <div class="guide-section-label">Acknowledgements</div>
+        <p class="guide-p">Thanks to <strong>Angela Sammer</strong>, for using her gifts to educate the Fellowship Design Team on the printmaking process, and to <strong>Dandy Roll of Downtown Rogers</strong>, for their gracious hospitality, supplying printmaking materials, and a space to print.</p>
+      </div>
+
+      <div class="guide-colophon">
+        In the Upper Room with Jesus &middot; Study Journal<br>
+        Artwork &copy; 2025 the artists &middot; Fellowship Bible Church of Northwest Arkansas
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <div id="guide-overlay" class="guide-overlay" role="dialog" aria-modal="true" aria-labelledby="guide-title">
   <div class="guide-app-bar">
     <button class="icon-btn" onclick="closeGuide()" aria-label="Back">
