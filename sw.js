@@ -2,14 +2,11 @@
 // Precaches the app shell + displayed images so the app works offline after
 // the first online visit. Audio/video stream (not precached). The unused
 // full-size day itinerary PNGs are intentionally excluded.
-const CACHE = 'acts-fellowship-v48';
+const CACHE = 'acts-fellowship-v49';
 const PRECACHE = [
   "./",
   "index.html",
   "manifest.json",
-  "assets/cta-athens.jpg",
-  "assets/cta-cruise.jpg",
-  "assets/cta-santorini.jpg",
   "assets/acropolis-1684.jpg",
   "assets/acropolis-1846.jpg",
   "assets/agora-1712.jpg",
@@ -48,21 +45,10 @@ const PRECACHE = [
   "assets/day8-map-philippi.jpg",
   "assets/day8-map-thessaloniki.jpg",
   "assets/day9-info.jpg",
-  "assets/hero-1.jpg",
-  "assets/hero-10.jpg",
-  "assets/hero-2.jpg",
-  "assets/hero-3.jpg",
-  "assets/hero-4.jpg",
-  "assets/hero-5.jpg",
-  "assets/hero-6.jpg",
-  "assets/hero-7.jpg",
-  "assets/hero-8.jpg",
-  "assets/hero-9.jpg",
   "assets/olive-grove.jpg",
   "assets/pale-hills.jpg",
   "assets/golden-scrub.jpg",
   "assets/far-mountain.jpg",
-  "assets/home-aerial.jpg",
   "assets/icon-192.png",
   "assets/icon-512.png"
 ];
