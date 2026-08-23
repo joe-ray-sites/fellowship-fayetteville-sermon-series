@@ -2878,13 +2878,23 @@ main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 .fmt-bar::-webkit-scrollbar { display: none; }
 
 /* Nested lists from the indent button, and the plain indent execCommand
-   produces outside a list (a <blockquote>) — shown as an indent, not a quote. */
+   produces outside a list (a <blockquote>) — shown as an indent, not a quote.
+   A blockquote the QUOTE button made carries .nq and is styled below; keeping
+   the two apart is what stops every existing indent reading as a quotation. */
 .notes-editor ul, .notes-editor ol { padding-left: 1.5em; margin: 0.4em 0; }
 .notes-editor ul ul, .notes-editor ol ol,
 .notes-editor ul ol, .notes-editor ol ul { margin: 0.2em 0; }
 .notes-editor li { margin: 0.15em 0; }
 .notes-editor blockquote {
   margin: 0.3em 0 0.3em 1.5em; padding: 0; border: none; font-style: normal;
+}
+/* A real quotation: the journal's red rule, set in the scripture serif. */
+.notes-editor blockquote.nq {
+  margin: 0.6em 0; padding: 2px 0 2px 14px;
+  border-left: 3px solid var(--md-sys-color-primary);
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-style: italic;
+  color: var(--md-sys-color-on-surface);
 }
 
 .notes-textarea {
@@ -11211,6 +11221,139 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener('scroll', _fitSheets);
 }
 
+/* ── Share this week's notes ─────────────────────────────────────────────
+   Stored notes are HTML; a share sheet wants plain text. Structure is marked up
+   with sentinel text nodes and then read back through textContent, which also
+   decodes entities for free rather than hand-rolling a serializer. */
+function _notesToText(html) {
+  const box = document.createElement('div');
+  box.innerHTML = String(html || '');
+
+  box.querySelectorAll('br').forEach(function (br) { br.replaceWith('\n'); });
+  box.querySelectorAll('li').forEach(function (li) {
+    let depth = 0, p = li.parentNode;
+    while (p && p !== box) {
+      if (p.tagName === 'UL' || p.tagName === 'OL') depth++;
+      p = p.parentNode;
+    }
+    const pad = '  '.repeat(Math.max(0, depth - 1));   // nested bullets keep their level
+    // The item's OWN list decides the marker — closest('ol') would walk past a
+    // <ul> nested inside an <ol> and number the bullet against the outer list.
+    const list = li.parentNode;
+    let marker = '\u2022 ';
+    if (list && list.tagName === 'OL') {
+      const items = Array.prototype.filter.call(list.children, function (x) { return x.tagName === 'LI'; });
+      marker = (items.indexOf(li) + 1) + '. ';
+    }
+    li.prepend('\n' + pad + marker);
+  });
+  // A real quotation gets quotation marks; the bare blockquote that the indent
+  // button leaves behind is only an indent, so it must not gain them.
+  box.querySelectorAll('blockquote').forEach(function (bq) {
+    if (bq.classList.contains('nq')) { bq.prepend('\n\u201C'); bq.append('\u201D\n'); }
+    else { bq.prepend('\n'); }
+  });
+  box.querySelectorAll('div, p, h1, h2, h3, h4, h5, h6').forEach(function (b) { b.prepend('\n'); });
+
+  return box.textContent
+    .replace(/\u00a0/g, ' ')
+    .split('\n')
+    .map(function (l) {                       // collapse runs, but keep the indent
+      const lead = l.match(/^[ \t]*/)[0];
+      return (lead + l.slice(lead.length).replace(/[ \t]+/g, ' ')).replace(/\s+$/, '');
+    })
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function _shareBtnSay(btn, msg) {
+  if (!btn) return;
+  const lab = btn.querySelector('.share-btn-label');
+  if (!lab) return;
+  const was = lab.dataset.was || lab.textContent;
+  lab.dataset.was = was;
+  lab.textContent = msg;
+  clearTimeout(btn._shareT);
+  btn._shareT = setTimeout(function () { lab.textContent = was; }, 2200);
+}
+
+function _shareFallback(text, btn) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(
+      function () { _shareBtnSay(btn, 'Copied to clipboard'); },
+      function () { _shareBtnSay(btn, 'Could not copy'); });
+  } else {
+    _shareBtnSay(btn, 'Sharing not supported here');
+  }
+}
+
+function shareWeekNotes(n, btn) {
+  const key  = wkNoteKey(n, 'notes');
+  const body = _notesToText(notesData[key] || '');
+  if (!body) { _shareBtnSay(btn, 'Nothing to share yet'); return; }
+  const w = (typeof weekOf === 'function') ? weekOf(n) : null;
+  const s = (typeof SERIES !== 'undefined' && SERIES[activeSeries]) ? SERIES[activeSeries] : {};
+  const study = s.title || 'Bible study';
+  const title = study + ' \u2014 Week ' + n;
+  const head  = title + ((w && w.ref) ? '\n' + w.ref : '');
+  const text  = head + '\n\n' + body;
+
+  // No await before this line: the API needs transient user activation.
+  if (navigator.share) {
+    try {
+      navigator.share({ title: title, text: text }).catch(function (e) {
+        if (e && e.name === 'AbortError') return;   // user dismissed the sheet
+        _shareFallback(text, btn);
+      });
+      return;
+    } catch (e) { /* fall through */ }
+  }
+  _shareFallback(text, btn);
+}
+
+/* Nearest matching ancestor of the caret, without escaping the editor —
+   Element.closest() would happily walk out into the sheet chrome. */
+function _blockInEditor(ed, sel) {
+  const s = window.getSelection();
+  if (!s || !s.rangeCount) return null;
+  let node = s.getRangeAt(0).startContainer;
+  if (node.nodeType === 3) node = node.parentNode;
+  while (node && node !== ed) {
+    if (node.matches && node.matches(sel)) return node;
+    node = node.parentNode;
+  }
+  return null;
+}
+
+/* Quote / unquote the current block. Tagged .nq so it stays distinct from the
+   bare <blockquote> that the indent button produces outside a list — see the
+   CSS note. styleWithCSS is forced OFF so formatBlock emits a real element
+   rather than an inline-styled wrapper. */
+function fmtQuote() {
+  const ed = _openNoteEditor();
+  if (!ed) return;
+  ed.focus();
+  const open = _blockInEditor(ed, 'blockquote.nq');
+  if (open) {
+    const parent = open.parentNode;
+    while (open.firstChild) parent.insertBefore(open.firstChild, open);
+    parent.removeChild(open);
+  } else {
+    try { document.execCommand('styleWithCSS', false, false); } catch (e) {}
+    try { document.execCommand('formatBlock', false, 'blockquote'); } catch (e) {}
+    let bq = _blockInEditor(ed, 'blockquote');
+    if (!bq) {                                   // engines differ on the tag form
+      try { document.execCommand('formatBlock', false, '<blockquote>'); } catch (e) {}
+      bq = _blockInEditor(ed, 'blockquote');
+    }
+    if (bq) bq.classList.add('nq');
+  }
+  _cleanFmtArtifacts(ed);
+  _refreshEmpty(ed);
+  if (ed.id === 'verse-note-editor') verseNoteInput(); else noteInput();
+}
+
 function fmtCmd(cmd, val) {
   const ed = _openNoteEditor();
   if (!ed) return;
@@ -13254,6 +13397,10 @@ function adhocWeekHTML(n) {
           <span class="cta-label note-btn-label">${wkHasNote(notesK) ? 'Edit Notes' : 'Add Notes'}</span>
           <span class="material-symbols-rounded cta-arrow">arrow_forward</span>
         </button>
+        ${wkHasNote(notesK) ? `<button class="card-cta card-cta--secondary" onclick="shareWeekNotes(${n}, this)">
+          <span class="material-symbols-rounded cta-lead">ios_share</span>
+          <span class="cta-label share-btn-label">Share Notes</span>
+        </button>` : ''}
       </div>
     </div>
 
@@ -13658,6 +13805,10 @@ function renderWeekDetail(n) {
           <span class="cta-label note-btn-label">${wkHasNote(notesK) ? 'Edit Notes' : 'Add Notes'}</span>
           <span class="material-symbols-rounded cta-arrow">arrow_forward</span>
         </button>
+        ${wkHasNote(notesK) ? `<button class="card-cta card-cta--secondary" onclick="shareWeekNotes(${n}, this)">
+          <span class="material-symbols-rounded cta-lead">ios_share</span>
+          <span class="cta-label share-btn-label">Share Notes</span>
+        </button>` : ''}
       </div>
     </div>
 
@@ -14538,7 +14689,7 @@ function _onCtaScroll() {
         <span class="material-symbols-rounded">close</span>
       </button>
     </div>
-    <div class="fmt-bar"><button type="button" class="fmt-btn" title="Bold" onmousedown="event.preventDefault()" onclick="fmtCmd('bold')"><span class="material-symbols-rounded">format_bold</span></button><button type="button" class="fmt-btn" title="Italic" onmousedown="event.preventDefault()" onclick="fmtCmd('italic')"><span class="material-symbols-rounded">format_italic</span></button><button type="button" class="fmt-btn" title="Underline" onmousedown="event.preventDefault()" onclick="fmtCmd('underline')"><span class="material-symbols-rounded">format_underlined</span></button><button type="button" class="fmt-btn" title="Bullet list" onmousedown="event.preventDefault()" onclick="fmtCmd('insertUnorderedList')"><span class="material-symbols-rounded">format_list_bulleted</span></button><button type="button" class="fmt-btn" title="Numbered list" onmousedown="event.preventDefault()" onclick="fmtCmd('insertOrderedList')"><span class="material-symbols-rounded">format_list_numbered</span></button><button type="button" class="fmt-btn" title="Outdent" onmousedown="event.preventDefault()" onclick="fmtIndent(0)"><span class="material-symbols-rounded">format_indent_decrease</span></button><button type="button" class="fmt-btn" title="Indent" onmousedown="event.preventDefault()" onclick="fmtIndent(1)"><span class="material-symbols-rounded">format_indent_increase</span></button><span class="fmt-sep"></span><button type="button" class="fmt-btn" title="Text colour" onmousedown="event.preventDefault()" onclick="fmtTogglePop(this,'fore')"><span class="material-symbols-rounded">format_color_text</span></button><button type="button" class="fmt-btn" title="Highlight" onmousedown="event.preventDefault()" onclick="fmtTogglePop(this,'hilite')"><span class="material-symbols-rounded">ink_highlighter</span></button><div class="fmt-pop"></div></div><div id="notes-editor" class="notes-textarea notes-editor is-empty" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Write your notes here…" oninput="noteInput()" onblur="noteSave()"></div>
+    <div class="fmt-bar"><button type="button" class="fmt-btn" title="Bold" onmousedown="event.preventDefault()" onclick="fmtCmd('bold')"><span class="material-symbols-rounded">format_bold</span></button><button type="button" class="fmt-btn" title="Italic" onmousedown="event.preventDefault()" onclick="fmtCmd('italic')"><span class="material-symbols-rounded">format_italic</span></button><button type="button" class="fmt-btn" title="Underline" onmousedown="event.preventDefault()" onclick="fmtCmd('underline')"><span class="material-symbols-rounded">format_underlined</span></button><button type="button" class="fmt-btn" title="Bullet list" onmousedown="event.preventDefault()" onclick="fmtCmd('insertUnorderedList')"><span class="material-symbols-rounded">format_list_bulleted</span></button><button type="button" class="fmt-btn" title="Numbered list" onmousedown="event.preventDefault()" onclick="fmtCmd('insertOrderedList')"><span class="material-symbols-rounded">format_list_numbered</span></button><button type="button" class="fmt-btn" title="Outdent" onmousedown="event.preventDefault()" onclick="fmtIndent(0)"><span class="material-symbols-rounded">format_indent_decrease</span></button><button type="button" class="fmt-btn" title="Indent" onmousedown="event.preventDefault()" onclick="fmtIndent(1)"><span class="material-symbols-rounded">format_indent_increase</span></button><button type="button" class="fmt-btn" title="Quote" onmousedown="event.preventDefault()" onclick="fmtQuote()"><span class="material-symbols-rounded">format_quote</span></button><span class="fmt-sep"></span><button type="button" class="fmt-btn" title="Text colour" onmousedown="event.preventDefault()" onclick="fmtTogglePop(this,'fore')"><span class="material-symbols-rounded">format_color_text</span></button><button type="button" class="fmt-btn" title="Highlight" onmousedown="event.preventDefault()" onclick="fmtTogglePop(this,'hilite')"><span class="material-symbols-rounded">ink_highlighter</span></button><div class="fmt-pop"></div></div><div id="notes-editor" class="notes-textarea notes-editor is-empty" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Write your notes here…" oninput="noteInput()" onblur="noteSave()"></div>
     <div class="notes-footer">
       <button class="notes-size-btn" onclick="adjustNotesFontSize(-1)" title="Smaller text">A−</button>
       <button class="notes-size-btn" onclick="adjustNotesFontSize(1)" title="Larger text">A+</button>
@@ -14579,7 +14730,7 @@ function _onCtaScroll() {
         <span class="material-symbols-rounded">close</span>
       </button>
     </div>
-    <div class="fmt-bar"><button type="button" class="fmt-btn" title="Bold" onmousedown="event.preventDefault()" onclick="fmtCmd('bold')"><span class="material-symbols-rounded">format_bold</span></button><button type="button" class="fmt-btn" title="Italic" onmousedown="event.preventDefault()" onclick="fmtCmd('italic')"><span class="material-symbols-rounded">format_italic</span></button><button type="button" class="fmt-btn" title="Underline" onmousedown="event.preventDefault()" onclick="fmtCmd('underline')"><span class="material-symbols-rounded">format_underlined</span></button><button type="button" class="fmt-btn" title="Bullet list" onmousedown="event.preventDefault()" onclick="fmtCmd('insertUnorderedList')"><span class="material-symbols-rounded">format_list_bulleted</span></button><button type="button" class="fmt-btn" title="Numbered list" onmousedown="event.preventDefault()" onclick="fmtCmd('insertOrderedList')"><span class="material-symbols-rounded">format_list_numbered</span></button><button type="button" class="fmt-btn" title="Outdent" onmousedown="event.preventDefault()" onclick="fmtIndent(0)"><span class="material-symbols-rounded">format_indent_decrease</span></button><button type="button" class="fmt-btn" title="Indent" onmousedown="event.preventDefault()" onclick="fmtIndent(1)"><span class="material-symbols-rounded">format_indent_increase</span></button><span class="fmt-sep"></span><button type="button" class="fmt-btn" title="Text colour" onmousedown="event.preventDefault()" onclick="fmtTogglePop(this,'fore')"><span class="material-symbols-rounded">format_color_text</span></button><button type="button" class="fmt-btn" title="Highlight" onmousedown="event.preventDefault()" onclick="fmtTogglePop(this,'hilite')"><span class="material-symbols-rounded">ink_highlighter</span></button><div class="fmt-pop"></div></div><div id="verse-note-editor" class="notes-textarea notes-editor is-empty" style="flex:none;height:34vh;" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Add a note for this verse…" oninput="verseNoteInput()" onblur="verseNoteSave()"></div>
+    <div class="fmt-bar"><button type="button" class="fmt-btn" title="Bold" onmousedown="event.preventDefault()" onclick="fmtCmd('bold')"><span class="material-symbols-rounded">format_bold</span></button><button type="button" class="fmt-btn" title="Italic" onmousedown="event.preventDefault()" onclick="fmtCmd('italic')"><span class="material-symbols-rounded">format_italic</span></button><button type="button" class="fmt-btn" title="Underline" onmousedown="event.preventDefault()" onclick="fmtCmd('underline')"><span class="material-symbols-rounded">format_underlined</span></button><button type="button" class="fmt-btn" title="Bullet list" onmousedown="event.preventDefault()" onclick="fmtCmd('insertUnorderedList')"><span class="material-symbols-rounded">format_list_bulleted</span></button><button type="button" class="fmt-btn" title="Numbered list" onmousedown="event.preventDefault()" onclick="fmtCmd('insertOrderedList')"><span class="material-symbols-rounded">format_list_numbered</span></button><button type="button" class="fmt-btn" title="Outdent" onmousedown="event.preventDefault()" onclick="fmtIndent(0)"><span class="material-symbols-rounded">format_indent_decrease</span></button><button type="button" class="fmt-btn" title="Indent" onmousedown="event.preventDefault()" onclick="fmtIndent(1)"><span class="material-symbols-rounded">format_indent_increase</span></button><button type="button" class="fmt-btn" title="Quote" onmousedown="event.preventDefault()" onclick="fmtQuote()"><span class="material-symbols-rounded">format_quote</span></button><span class="fmt-sep"></span><button type="button" class="fmt-btn" title="Text colour" onmousedown="event.preventDefault()" onclick="fmtTogglePop(this,'fore')"><span class="material-symbols-rounded">format_color_text</span></button><button type="button" class="fmt-btn" title="Highlight" onmousedown="event.preventDefault()" onclick="fmtTogglePop(this,'hilite')"><span class="material-symbols-rounded">ink_highlighter</span></button><div class="fmt-pop"></div></div><div id="verse-note-editor" class="notes-textarea notes-editor is-empty" style="flex:none;height:34vh;" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Add a note for this verse…" oninput="verseNoteInput()" onblur="verseNoteSave()"></div>
     <div class="notes-footer">
       <button class="notes-size-btn" id="verse-note-delete" onclick="deleteVerseNote()" style="display:none;">Delete</button>
       <div class="notes-status notes-status--saved" id="verse-note-status"><span class="material-symbols-rounded">cloud_done</span><span>Notes save as you type</span></div>
