@@ -11288,18 +11288,11 @@ function _shareFallback(text, btn) {
   }
 }
 
-function shareWeekNotes(n, btn) {
-  const key  = wkNoteKey(n, 'notes');
-  const body = _notesToText(notesData[key] || '');
-  if (!body) { _shareBtnSay(btn, 'Nothing to share yet'); return; }
-  const w = (typeof weekOf === 'function') ? weekOf(n) : null;
-  const s = (typeof SERIES !== 'undefined' && SERIES[activeSeries]) ? SERIES[activeSeries] : {};
-  const study = s.title || 'Bible study';
-  const title = study + ' \u2014 Week ' + n;
-  const head  = title + ((w && w.ref) ? '\n' + w.ref : '');
-  const text  = head + '\n\n' + body;
-
-  // No await before this line: the API needs transient user activation.
+/* The one place navigator.share is called. Every caller must reach this
+   synchronously from the click handler — the API needs transient user
+   activation, so nothing may be awaited on the way here. */
+function _shareOut(title, text, btn) {
+  if (!text) { _shareBtnSay(btn, 'Nothing to share yet'); return; }
   if (navigator.share) {
     try {
       navigator.share({ title: title, text: text }).catch(function (e) {
@@ -11310,6 +11303,74 @@ function shareWeekNotes(n, btn) {
     } catch (e) { /* fall through */ }
   }
   _shareFallback(text, btn);
+}
+
+/* Study name, week number and passage — the header every share opens with. */
+function _shareHead(n, kind) {
+  const w = (typeof weekOf === 'function') ? weekOf(n) : null;
+  const s = (typeof SERIES !== 'undefined' && SERIES[activeSeries]) ? SERIES[activeSeries] : {};
+  const title = (s.title || 'Bible study') + ' \u2014 Week ' + n + (kind ? ' \u2014 ' + kind : '');
+  return { title: title, head: title + ((w && w.ref) ? '\n' + w.ref : '') };
+}
+
+function shareWeekNotes(n, btn) {
+  const body = _notesToText(notesData[wkNoteKey(n, 'notes')] || '');
+  if (!body) { _shareBtnSay(btn, 'Nothing to share yet'); return; }
+  const h = _shareHead(n, null);
+  _shareOut(h.title, h.head + '\n\n' + body, btn);
+}
+
+/* Does this week have anything on the Devotion tab worth sharing? Gates the
+   button, so it never offers to share an empty quiet time. */
+function wkHasDevotionNotes(n) {
+  const w = (typeof weekOf === 'function') ? weekOf(n) : null;
+  if (!w) return false;
+  if (wkHasNote(wkNoteKey(n, 'qt'))) return true;
+  return (w.readings || []).some(function (r, idx) {
+    return wkHasNote(wkNoteKey(n, 'read' + (idx + 1)));
+  });
+}
+
+function shareDevotionNotes(n, btn) {
+  const w = (typeof weekOf === 'function') ? weekOf(n) : null;
+  if (!w) return;
+  const parts = [];
+  const qt = _notesToText(notesData[wkNoteKey(n, 'qt')] || '');
+  if (qt) parts.push('Quiet Time\n' + qt);
+  (w.readings || []).forEach(function (r, idx) {
+    const i = idx + 1;
+    const t = _notesToText(notesData[wkNoteKey(n, 'read' + i)] || '');
+    if (t) parts.push('Day ' + i + ' \u00b7 ' + r.ref + '\n' + t);
+  });
+  if (!parts.length) { _shareBtnSay(btn, 'Nothing to share yet'); return; }
+  const h = _shareHead(n, 'Quiet Time');
+  _shareOut(h.title, h.head + '\n\n' + parts.join('\n\n'), btn);
+}
+
+function wkHasDiscussionAnswers(n) {
+  const w = (typeof weekOf === 'function') ? weekOf(n) : null;
+  if (!w) return false;
+  return (w.questions || []).some(function (q, i) {
+    return String(notesData[wkNoteKey(n, 'q' + (i + 1))] || '').trim() !== '';
+  });
+}
+
+function shareDiscussion(n, btn) {
+  const w = (typeof weekOf === 'function') ? weekOf(n) : null;
+  if (!w) return;
+  const parts = [];
+  (w.questions || []).forEach(function (q, i) {
+    // Answers are <textarea> values — PLAIN text, stored raw. Running them
+    // through _notesToText would assign them to innerHTML, and a "<" followed
+    // by a letter is then parsed as a tag: "the <name> field" loses "<name>"
+    // outright. (A "<" before a space or digit survives, which is exactly why
+    // this is the kind of bug that hides until someone types the wrong thing.)
+    const a = String(notesData[wkNoteKey(n, 'q' + (i + 1))] || '').trim();
+    if (a) parts.push((i + 1) + '. ' + q.q + '\n' + a);
+  });
+  if (!parts.length) { _shareBtnSay(btn, 'No answers yet'); return; }
+  const h = _shareHead(n, 'Discussion');
+  _shareOut(h.title, h.head + '\n\n' + parts.join('\n\n'), btn);
 }
 
 /* Nearest matching ancestor of the caret, without escaping the editor —
@@ -13851,6 +13912,10 @@ function renderWeekDetail(n) {
           <span class="cta-label">Open</span>
           <span class="material-symbols-rounded cta-arrow">arrow_forward</span>
         </button>
+        ${wkHasDiscussionAnswers(n) ? `<button class="card-cta card-cta--secondary" onclick="shareDiscussion(${n}, this)">
+          <span class="material-symbols-rounded cta-lead">ios_share</span>
+          <span class="cta-label share-btn-label">Share Answers</span>
+        </button>` : ''}
       </div>
     </div>
   `;
@@ -13951,6 +14016,9 @@ function devotionCardHTML(w) {
           onclick="openNotesModal('${notesK}', 'Week ${n} Quiet Time')">
           <span class="material-symbols-rounded">edit_note</span><span class="note-btn-label">${wkHasNote(notesK) ? 'Edit Notes' : 'Add Notes'}</span>
         </button>
+        ${wkHasDevotionNotes(n) ? `<button class="text-btn" style="margin:0;padding:0;" onclick="shareDevotionNotes(${n}, this)">
+          <span class="material-symbols-rounded">ios_share</span><span class="share-btn-label">Share</span>
+        </button>` : ''}
         <button class="text-btn" style="margin:0;padding:0;" onclick="goToStudyWeek(${n})">
           <span class="material-symbols-rounded">menu_book</span>Week ${n} in the Study
         </button>
@@ -14114,6 +14182,13 @@ function dqFlush() {
     if (el.dataset.noteKey) notesData[el.dataset.noteKey] = el.value;
   });
   try { localStorage.setItem(SERIES_KEY + 'notes', JSON.stringify(notesData)); } catch (e) {}
+  // The Study card's Share Answers row is gated on an answer existing, so the
+  // week has to re-render once the sheet commits — otherwise the row would not
+  // appear until the user navigated away from the week and back.
+  const _dqWk = /^acts_wk(\d+)_/.exec(boxes[0].dataset.noteKey || '');
+  if (_dqWk && activeSection === 'itinerary' && typeof renderWeekDetail === 'function') {
+    renderWeekDetail(parseInt(_dqWk[1], 10));
+  }
 }
 
 function openDiscussion(n) {
