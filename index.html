@@ -3291,6 +3291,95 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
   border-color: var(--journal-red);
 }
 .day-chip--add { font-weight: 700; }
+/* ── ABIDE — 12 week guide to spiritual practices ───────────────────────── */
+.ab-body { padding: 4px 16px 8px; }
+.ab-p { font-size: 14px; line-height: 1.6; color: var(--md-sys-color-on-surface); margin: 0 0 12px; }
+.ab-h {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--devotion-gold); margin: 16px 0 8px;
+}
+.ab-steps { margin: 0 0 4px; padding-left: 22px; }
+.ab-steps li { font-size: 14px; line-height: 1.55; color: var(--md-sys-color-on-surface); margin: 0 0 9px; }
+.ab-tips { margin: 0 0 4px; padding-left: 20px; }
+.ab-tips li { font-size: 13.5px; line-height: 1.55; color: var(--md-sys-color-on-surface-variant); margin: 0 0 8px; }
+.ab-note { font-size: 13.5px; line-height: 1.55; font-style: italic; color: var(--md-sys-color-on-surface-variant); margin: 12px 0 4px; }
+/* The corporate prayers (Confession, Assurance of Pardon) — same gold panel
+   language as the Memory Verse, set in the scripture serif. */
+.ab-prayer {
+  margin: 14px 0 4px; padding: 13px 15px;
+  background: var(--devotion-gold-bg);
+  border-left: 3px solid var(--devotion-gold-border);
+  border-radius: 10px;
+}
+.ab-prayer-title {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase;
+  color: var(--devotion-gold); margin-bottom: 8px;
+}
+.ab-prayer-lines {
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-size: 15px; line-height: 1.7; font-style: italic;
+  color: var(--md-sys-color-on-surface);
+}
+.ab-challenge {
+  margin-top: 16px; padding: 13px 15px;
+  border: 1.5px solid var(--md-sys-color-outline-variant); border-radius: 12px;
+}
+.ab-challenge .ab-h { margin-top: 0; color: var(--md-sys-color-primary); }
+.ab-prompt { font-size: 13.5px; line-height: 1.55; color: var(--md-sys-color-on-surface-variant); margin: 0 0 10px; }
+.ab-days { display: flex; gap: 8px; margin: 4px 0 10px; }
+.ab-day {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid var(--md-sys-color-outline); background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-family: inherit; color: var(--md-sys-color-on-surface-variant);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+}
+.ab-day:active { transform: scale(0.94); }
+.ab-day-num { font-size: 13px; font-weight: 700; }
+.ab-day-check { display: none; font-size: 18px; }
+.ab-day.done { background: var(--journal-red); border-color: var(--journal-red); color: var(--journal-red-on); }
+.ab-day.done .ab-day-num { display: none; }
+.ab-day.done .ab-day-check { display: block; }
+.ab-days-cap {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.ab-respond { margin-top: 16px; }
+/* 16px floor — below it iOS zooms the page in on focus (see the note editors). */
+.ab-input {
+  display: block; width: 100%; box-sizing: border-box;
+  margin: 0; padding: 12px 14px; min-height: 4.2em; resize: none; overflow: hidden;
+  background: var(--md-sys-color-surface-variant, rgba(128,128,128,0.10));
+  border: 1.5px solid transparent; border-radius: 12px;
+  font-family: inherit; font-size: 16px; line-height: 1.6;
+  color: var(--md-sys-color-on-surface); outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.ab-input::placeholder { color: var(--md-sys-color-on-surface-variant); opacity: 0.7; }
+.ab-input:focus { border-color: var(--md-sys-color-primary); background: var(--md-sys-color-surface); }
+.ab-saves {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11.5px; color: var(--md-sys-color-on-surface-variant); margin: 6px 0 2px;
+}
+.ab-saves .material-symbols-rounded { font-size: 15px; color: var(--md-sys-color-primary); }
+.ab-progress { display: flex; align-items: center; gap: 5px; margin: 14px 16px 0; }
+.ab-mini { width: 8px; height: 8px; border-radius: 50%; background: var(--md-sys-color-outline-variant); flex-shrink: 0; }
+.ab-mini.on { background: var(--devotion-gold); }
+.ab-progress-cap {
+  display: flex; align-items: center; gap: 3px; margin-left: 6px;
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.ab-tick { font-size: 14px; color: var(--md-sys-color-primary); }
+.ab-callout-emoji { font-size: 15px; line-height: 1; flex-shrink: 0; }
+/* The relocated Insights page: a reading measure inside the overlay. */
+.insights-inner { max-width: 640px; margin: 0 auto; }
+#insights-overlay .guide-body { padding: 14px 14px 64px; }
 </style>
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <link rel="manifest" href="manifest.json">
@@ -3445,6 +3534,9 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
   <button class="header-menu-item" id="spectraMenuItem" onclick="closeHeaderMenu(); openSpectra();" role="menuitem">
     <span class="material-symbols-rounded">palette</span><span>Spectra</span>
   </button>
+  <button class="header-menu-item" onclick="closeHeaderMenu(); openInsightsPage();" role="menuitem">
+    <span class="material-symbols-rounded">lightbulb</span><span>Insights</span>
+  </button>
   <button class="header-menu-item" onclick="closeHeaderMenu(); openShelf();" role="menuitem">
     <span class="material-symbols-rounded">auto_stories</span><span>Past Sermon Series</span>
   </button>
@@ -3516,10 +3608,10 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
     <div class="cta-band">
       <div class="cta-bg"><img loading="lazy" src="assets/far-mountain.jpg" alt="A distant mountain across an open plain"></div>
       <div class="cta-content">
-        <div class="cta-eyebrow reveal-item">Go Deeper</div>
-        <h2 class="cta-title reveal-item">Insights</h2>
-        <p class="cta-text reveal-item">Longer reflections drawn from the study &mdash; the background, the turns in the argument, and the through-lines worth slowing down for.</p>
-        <button class="cta-btn reveal-item" type="button" onclick="goToTab('explore')">Read the Insights <span class="material-symbols-rounded">arrow_forward</span></button>
+        <div class="cta-eyebrow reveal-item">Practice</div>
+        <h2 class="cta-title reveal-item">Abide</h2>
+        <p class="cta-text reveal-item">Twelve weeks of spiritual practices alongside the study &mdash; solitude, fasting, scripture memory, confession &mdash; each with a challenge to take up and space to respond.</p>
+        <button class="cta-btn reveal-item" type="button" onclick="goToTab('explore')">Take Up the Practices <span class="material-symbols-rounded">arrow_forward</span></button>
       </div>
     </div>
 
@@ -3553,7 +3645,7 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
 
   <!-- NOTES -->
   <section id="section-explore" class="section">
-    <div id="exploreCards"></div>
+    <div id="abideCards"></div>
   </section>
 
   <!-- BIBLICAL -->
@@ -3604,9 +3696,10 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
   </button>
   <button class="nav-tab" data-section="explore">
     <div class="nav-indicator"></div>
-    <!-- Explore is about the scriptures now, not sites: compass -> insight lamp -->
-    <span class="material-symbols-rounded">lightbulb</span>
-    <span class="nav-label">Insights</span>
+    <!-- Abide: the 12-week spiritual practices companion. The Insights page
+         moved to the header menu; internals keep the "explore" name. -->
+    <span class="material-symbols-rounded">spa</span>
+    <span class="nav-label">Abide</span>
   </button>
   <button class="nav-tab nav-tab--feature" data-section="itinerary">
     <div class="nav-indicator"></div>
@@ -5336,7 +5429,7 @@ function playCardIntro(containerId) {
     c.classList.add('explore-rise');
   });
 }
-function playExploreIntro() { playCardIntro('exploreCards'); }
+function playExploreIntro() { playCardIntro('abideCards'); }
 
 /* buildExploreCards() now lives with the Passage Insight code above, and
    builds one card per essay instead of one per Greece trip day. The
@@ -11043,6 +11136,7 @@ function closeVideoModal() {
 }
 function closeScriptModal() {
   if (typeof dqFlush === 'function') dqFlush();
+  if (typeof abFlush === 'function') abFlush();
   clearActiveVerse();
   document.getElementById('script-modal').classList.remove('open');
   _fitSheets();
@@ -13885,6 +13979,27 @@ function renderWeekDetail(n) {
       </div>
     </div>` : ''}
 
+    ${(function () {
+      // The Going Deeper chapter essays used to be reachable only on the
+      // Insights page; with that page moved to the menu, the Study week they
+      // conclude links to them directly. Only upperroom ships gd_john* keys,
+      // so other series simply render nothing here.
+      const ch = ({ 3: 13, 5: 14, 7: 15, 10: 16, 12: 17 })[n];
+      const gd = ch && typeof ACTS_INSIGHTS !== 'undefined'
+        ? ACTS_INSIGHTS.find(x => String(x.wk) === 'gd_john' + ch) : null;
+      return gd ? `<div class="card" style="margin-bottom:16px;">
+      <div class="card-content">
+        <div class="wk-head"><span class="material-symbols-rounded wk-head-icon">history_edu</span><span>Going Deeper</span></div>
+        <div class="wk-sub">A chapter-level essay on John ${ch} &mdash; the study behind these weeks.</div>
+        <button class="card-cta card-cta--gold" onclick="openInsight('${gd.wk}')">
+          <span class="material-symbols-rounded cta-lead">article</span>
+          <span class="cta-label">${esc(gd.title)}</span>
+          <span class="material-symbols-rounded cta-arrow">arrow_forward</span>
+        </button>
+      </div>
+    </div>` : '';
+    })()}
+
     <div class="card" style="margin-bottom:16px;">
       <div class="card-content">
         <div class="wk-head">
@@ -14355,6 +14470,8 @@ document.addEventListener('keydown', function (e) {
   if (sp && sp.classList.contains('open')) closeSpectra();
   const pb = document.getElementById('pbs-overlay');
   if (pb && pb.classList.contains('open')) closePbs();
+  const io = document.getElementById('insights-overlay');
+  if (io && io.classList.contains('open')) closeInsightsPage();
 });
 
 /* ── LISTEN — "Sermon Notes", one entry per study week ──────────────────────
@@ -14485,7 +14602,7 @@ function insightCardHTML(ins) {
   const chip = ins.chip || 'Passage Introduction';
   const idArg = "'" + String(ins.wk).replace(/'/g, "\\'") + "'";
   const foot = (wkNum != null && w)
-    ? `<button class="ins-week" onclick="goToStudyWeek(${wkNum})"><span>${footer}</span>
+    ? `<button class="ins-week" onclick="closeInsightsPage();goToStudyWeek(${wkNum})"><span>${footer}</span>
          <span class="material-symbols-rounded">chevron_right</span></button>`
     : `<span class="ins-week ins-week--static">${footer}</span>`;
   return `
@@ -14551,6 +14668,541 @@ function buildExploreCards() {
     '<div class="ins-list">' + ACTS_INSIGHTS.map(insightCardHTML).join('') + '</div>';
 }
 
+/* ═══════════════════════════════════════════════════
+   ABIDE — 12 Week Guide to Spiritual Practices.
+   Content transcribed from the church's printed companion booklet to
+   "In the Upper Room with Jesus" (photographed pages, indexed 2026-08-23).
+   The tab is deliberately SERIES-INDEPENDENT: it is one program with one
+   progress record, so its storage lives under the fixed key 'acts_abide'
+   rather than SERIES_KEY — switching to a past series must not hide or
+   fragment a person's practice record.
+   ═══════════════════════════════════════════════════ */
+
+const ABIDE_WEEKS = [
+ { n: 1, roman: 'I', title: 'Solitude & Scripture',
+   intro: ['This week we begin with the foundation every other practice builds on: unhurried, quiet time with the Lord in His Word. In a screen-saturated, noisy, distracted world, the voice of the Spirit may be hard to hear — so we make space to listen.'],
+   guideLabel: 'Daily Guide',
+   guide: [
+     'Wake up 15–20 minutes earlier in the morning than you typically do.',
+     'Find a space where you can quietly focus on the Lord.',
+     'Take a few deep breaths.',
+     'Bring to mind anything that is distracting you right now from this time with the Lord. Write those things down and ask the Lord to take care of them. Pray and ask the Lord to give you focus so that you can give Him your attention.',
+     'Read today’s passage (in the Study tab of this app, or the In the Upper Room With Jesus book) slowly.',
+     'Read the passage again. Pay attention to what the Lord causes to stand out as you do.',
+     'Take five minutes and quietly try to clear your mind so that you might listen to what the Lord’s Spirit may want to reveal to you. Yes, this may seem a little hard at first — but one of our goals as we abide in Christ is to give space for God’s Spirit and God’s Word to speak to us. To do that, we have to practice time away from the noise and hurry of our daily lives and experience the presence of God.',
+     'Each day, take some time to write down any personal reflections from these moments of silence and solitude.'
+   ],
+   practical: null,
+   discussion: [
+     'What contributes to the “noise” in your life? (Both literal noise, as well as just distractions and “noise” for your soul?)',
+     'What was most challenging and most rewarding about practicing this discipline for you this week?',
+     'What was the thing you found most “distracting” as you tried to listen to the voice of the Spirit?',
+     'What did the Word of God through the Spirit reveal to you this week, if anything?'
+   ] },
+
+ { n: 2, roman: 'II', title: 'Solitude & Scripture',
+   intro: ['The practice continues — same quiet, same Word — and this week your body joins your prayers: kneeling, and praying the Lord’s Prayer slowly, line by line.'],
+   guideLabel: 'Daily Guide',
+   guide: [
+     'Wake up 15–20 minutes earlier in the morning than you typically do.',
+     'Find a space where you can quietly focus on the Lord.',
+     'Take a few deep breaths.',
+     'Bring to mind anything that is distracting you right now from this time with the Lord. Write it down and ask the Lord to take care of those things. Pray and ask the Lord to give you focus so that you can give Him your attention.',
+     'Take 2–3 minutes, and posture your body on your knees (if you are able). On your knees, pray the Lord’s Prayer (Matthew 6:9–13) slowly, thinking and contemplating each line.',
+     'Read today’s passage slowly.',
+     'Read the passage again. Pay attention to what the Lord causes to stand out as you do.',
+     'Take five minutes and quietly try to clear your mind so that you might listen to what the Lord’s Spirit may want to reveal to you.',
+     'Each day, take some time to write down any personal reflections from your time.'
+   ],
+   practical: null,
+   discussion: [
+     'What was easier or more challenging this week compared to the first week?',
+     'How did your physical posture and the content of the Lord’s Prayer change your prayer time?',
+     'How can you incorporate this practice in your spiritual rhythms moving forward?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 3, roman: 'III', title: 'Fasting · Part 1',
+   intro: ['Fasting is an intentional practice of going without food to pray, to surrender your desires, and to shift your deep-seated hunger from physical sustenance to God (John Mark Comer).',
+     'Fasting is not the same as a diet or “intermittent fasting.” What’s the difference? Dieting is about removing something, like calories in the form of food. Fasting is similar, in that something is removed — but it’s different in that the thing that is removed is replaced with prayer and dependence on God.'],
+   guideLabel: 'Weekly Guide',
+   guide: [
+     'As you continue the practice of solitude and scripture each morning, over the next three weeks, add the practice of fasting.',
+     'Choose one day this week and fast from breakfast and lunch. (It may be helpful to put it on your calendar.) Take the time that you would have spent eating and instead devote yourself to the Lord in prayer.'
+   ],
+   practical: [
+     'Remove the distractions of your workday as best as you can. Put your phone somewhere else.',
+     'If you are able, you may consider taking a prayer walk around your office, neighborhood, or part of your city.',
+     'Before you do, bring to mind anything that is distracting you right now from this time with the Lord. Write it down and ask the Lord to take care of those things. Pray to the Lord to give you focus so that you can give Him your attention.'
+   ],
+   discussion: [
+     'Have you ever fasted before, and if so what was your experience like?',
+     'What did you do with your time of prayer when you normally would have eaten?',
+     'What was rewarding and challenging about adopting this spiritual practice?',
+     'How can you incorporate a regular practice of fasting from food in your life? Weekly? Monthly? Multi-day fast?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 4, roman: 'IV', title: 'Fasting · Part 2',
+   intro: ['Together this week, we want to fast from distractions and noise. Remember, fasting is an intentional practice of going without something we typically depend on, to sharpen our focus and our dependence on Jesus. In a technology-filled digital world, this kind of fasting will only be more and more necessary for our souls.'],
+   guideLabel: 'Weekly Guide',
+   guide: [
+     'As you continue the practice of solitude and scripture each morning, consider fasting from food one day this week just like last week.',
+     'This week, we ask you to identify an app or website (not essential to your job) that is a distraction for you — and delete it.'
+   ],
+   practical: [
+     'Start with your phone, but you may have to look at your tablet, gaming console, or TV.',
+     'Your “Screen Time Settings” on your phone will tell you which apps you use the most.',
+     'Don’t replace the time you typically spent on that app with a similar app. For example, if you remove an app that’s a game of some kind, don’t just replace it with a different game. You may consider deleting all the games from your phone.',
+     'Yes, we know there are Fantasy Leagues. So either set your team before the week or choose to let it go.',
+     'If the app or website is sinful or harmful to your soul, you may need to ask someone to come alongside you to delete it, to keep you accountable and give you space to be honest.',
+     'This week, pay attention to how distracted you are.'
+   ],
+   discussion: [
+     'What did you delete? Why did you delete it?',
+     'What do your Screen Time Settings reveal about how you spend your time?',
+     'What did you find challenging and rewarding about this spiritual practice this week?',
+     'How can you incorporate this practice into your regular life after this week?',
+     'Do you think your soul would be better off if you just kept the app or website off your device moving forward?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 5, roman: 'V', title: 'Fasting · Part 3',
+   intro: ['Together this week, we continue the practice of removing distractions from our life.'],
+   guideLabel: 'Weekly Guide',
+   guide: [
+     'As you continue the practice of solitude and scripture each morning, consider fasting from food one day just like the last two weeks. If you found it helpful for your soul to go without the app you deleted last week, consider keeping it off your phone.',
+     'This week, we ask you to take the weeknights after you get home from school or work, and as a family or household fast from your screens for the whole evening.'
+   ],
+   practical: [
+     'You may not be able to turn your phone off for a variety of reasons. But consider putting all phones in one location (kitchen table, drawer in the bedroom) and keep them there all evening. That way you can hear it in case of an emergency, or check it periodically if you need to — but it’s not on your person and distracting you.',
+     'If you have kids you may need to adapt.',
+     'Put tablets, computers, gaming console controllers, and TV remotes in a drawer.',
+     'If you have a family or roommates, consider engaging in intentional time together, especially over a meal.',
+     'You may invite friends or neighbors to join you.',
+     'You may consider having a devotional time or Bible reading time together.'
+   ],
+   note: 'What we are practicing this week is an adapted form of the Sabbath. The Sabbath is an ancient weekly rhythm to disconnect from the pull of the world, so that we can be reminded of the New Creation God intends to bring into the world through His people.',
+   discussion: [
+     'Have you ever tried this type of digital or screen time fast before?',
+     'What was the most difficult thing about embracing this form of fasting?',
+     'What did you (and your household, if you have one) do to intentionally fill the time, if anything?',
+     'Did this practice get easier or harder throughout the week?',
+     'How can you incorporate this rhythm in your regular life after this week? One night of Sabbath a week? One night a month? A multi-day tech fast? Fasting from screens on vacations?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 6, roman: 'VI', title: 'Scripture Memory',
+   intro: ['Scripture memory is a practice that enhances your Bible study and leads you into a devotional experience. It enables your heart and mind to marinate on the Scriptures like nothing else.'],
+   guideLabel: 'Daily Guide',
+   guide: [
+     'As you continue the practice of solitude and scripture each morning, consider fasting from food one day this week. Additionally, consider taking one night this week and doing a Sabbath night.',
+     'Five days over the next week, take 15 minutes a day and work to memorize John 15:1–11.'
+   ],
+   practicalLabel: 'Getting Practical — a guide for memorizing extended passages',
+   practical: [
+     'Day 1: Listen to the passage read out loud 4–5 times. (You can use an app or go online for this. Doing it in a group setting is even more beneficial.)',
+     'Day 2: Read the passage out loud 4–5 times.',
+     'Day 3: Read the passage out loud 4–5 times.',
+     'Day 4: Keep your Bible in front of you, and try to say John 15:1–4 out loud from memory. If you need to look down several times, that’s ok.',
+     'Day 5: Keep your Bible in front of you, and try to say John 15:5–8 out loud from memory. If you need to look down several times, that’s ok.',
+     'Consider having a partner join you in your scripture memory practice.'
+   ],
+   discussion: [
+     'Have you ever tried memorizing Scripture before? How did it go?',
+     'Have you ever tried memorizing larger passages of Scripture, like we are this week? How did it go?',
+     'Did the daily guide help you? If so, how? If not, what do you think will help you commit these verses to memory?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 7, roman: 'VII', title: 'Scripture Memory',
+   intro: ['Scripture memory is not a one-week practice. Continue to allow John 15:1–11 to soak into your heart as you memorize it.'],
+   guideLabel: 'Daily Guide',
+   guide: [
+     'As you continue the practice of solitude and scripture each morning, consider fasting from food one day this week. Additionally, consider taking one night this week and doing a Sabbath night.',
+     'Five days over the next week, take 15 minutes a day and work to memorize John 15:1–11.'
+   ],
+   practicalLabel: 'Getting Practical — some helpful suggestions',
+   practical: [
+     'Days 1–4: Keep your Bible in front of you, and try to say John 15:1–11 out loud from memory. If you need to look down several times, that’s ok.',
+     'Day 5: Close your Bible and try to say John 15:1–11 out loud from memory.',
+     'Again, this is way more rewarding with other people.'
+   ],
+   discussion: [
+     'How much of the passage have you committed to memory?',
+     'In memorizing the passage, do you feel like you understand it more clearly?',
+     'What has especially stood out to you in the passage as you’ve worked to memorize it?',
+     'What was challenging and rewarding about these weeks of Scripture memory?',
+     'How can you continue to make this a regular part of your spiritual rhythm after these two weeks?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 8, roman: 'VIII', title: 'Confession',
+   intro: ['Each week in our corporate worship we take time to confess our sins. When we spend time in confession, we recognize both our own failures and God’s grace. We know we can bring our sins to Him and confess them because “if we confess our sins, he is faithful and just to forgive us our sins and to cleanse us from all unrighteousness” (1 John 1:9 ESV).'],
+   guideLabel: 'Daily Guide',
+   guide: [
+     'Continue to practice scripture and solitude.',
+     'Each day this week, spend some time at the end of the day practicing confession. Reflect back over your day and ask God to forgive you for specific instances where your actions (including words), your thoughts or attitudes, or your motives fell short of honoring God.',
+     'To do this: personally pray our corporate Confession, carefully thinking about each phrase as you do.'
+   ],
+   prayer: { title: 'The Confession', lines: [
+     'Heavenly Father,', 'Have mercy on me', 'I have not loved you as you deserve',
+     'I have not loved my neighbor as myself', 'I have not obeyed you as I should',
+     'Lord, forgive me my sin', 'I am in need of a Savior.' ] },
+   practical: [
+     'Be specific. Rather than praying “Father, I confess that I got angry,” pray “Father, forgive me for speaking in anger to my coworker when the order was wrong.” The more specific our confessions, the more we can grow in Christ-likeness as we target specific sins that hold us back.'
+   ],
+   discussion: [
+     'Confessing our sins to one another is a critical part of the practice of confession (James 5:16). Think back over your time in confession this week. Was there a theme or a sin that seemed to come up over and over? Confess this to your group or a trusted spiritual friend.',
+     'How did thinking over your day each evening and confessing specific sins change your walk with the Lord this week?',
+     'How can you continue to make this a regular part of your spiritual rhythm after this week?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 9, roman: 'IX', title: 'Repentance',
+   intro: ['To repent is to turn and go the other direction. When the Spirit reveals to us that our thoughts, motivations, or actions are not in alignment with what God wants for us, the appropriate response is to repent: to turn from disobedience and go in the direction of obedience.'],
+   guideLabel: 'Daily Guide',
+   guide: [
+     'Continue to practice scripture and solitude.',
+     'This week, spend some time at the end of the day practicing confession and repentance. Continue the practice you began last week of confessing your sins each evening. Then repent. Turn and go the other way.',
+     'Identify a particular aspect of your life in which you struggle to obey God. Ask God to help you change that part of your life. Make a plan to enable the change.'
+   ],
+   practical: [
+     'Think through things you could remove or add that would make repentance possible.',
+     'Maybe you need to stop going to a certain place, or using your phone a certain way.',
+     'Maybe there are people you need to take a break from, or an activity that you need to stop doing.',
+     'The more specific you can be, the more effective this practice will be.'
+   ],
+   discussion: [
+     'Share with your group or a trusted spiritual friend where you are struggling. Ask them to hold you accountable in this area of your life. Encourage your group members as they share with you. We are stronger together than we can ever be on our own (Ecclesiastes 4:12).',
+     'How do the other spiritual practices you have engaged in during the Abide experience make repentance possible? What has been the most difficult part of these spiritual practices so far? What has been the most rewarding?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 10, roman: 'X', title: 'Renewal',
+   intro: ['Once we have confessed our sin, received God’s forgiveness, and repented from our sinful actions, thoughts, and motives, we can experience renewal. When we practice spiritual renewal, we move from brokenness over our sin into a deeper experience of God’s love. We don’t stay in that spot of confession and repentance. As we seek renewal, we find focus, peace, and strength that can come only from God.'],
+   guideLabel: 'Daily Guide',
+   guide: [
+     'Continue to practice solitude and scripture, along with confession and repentance.',
+     'This week, take some time to allow God to refresh your heart and mind. Each day, read the passage assigned below and then pray the words back to the Lord, personalizing it and reflecting on the powerful promises that it contains.',
+     'Day One: Read Psalm 103',
+     'Day Two: Read Psalm 51',
+     'Day Three: 2 Corinthians 5:17–21',
+     'Day Four: Galatians 5',
+     'Day Five: Luke 18:9–17',
+     'As you conclude, personally pray our corporate Assurance of Pardon, carefully thinking about each phrase as you do.'
+   ],
+   prayer: { title: 'Assurance of Pardon', lines: [
+     'Believe the good news', 'Jesus died for us', 'Jesus rose for us',
+     'Jesus intercedes for us', 'In him, I am a new creation',
+     'In him, I receive forgiveness of sin', 'In him, I have a Savior',
+     'To God be the glory forever and ever, Amen.' ] },
+   practical: null,
+   discussion: [
+     'How did the practice of spiritual renewal impact your week? Did you have a breakthrough moment, or was it more like a series of small victories?',
+     'How does spiritual refreshment affect you and your mental, physical, and relational health?',
+     'If you are struggling to experience spiritual renewal, share that with your group. Ask your group to pray for you. What are some things you could change to help you experience spiritual renewal?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 11, roman: 'XI', title: 'Simplicity',
+   intro: ['“Simplicity is freedom.” —Richard J. Foster',
+     'The practice of simplicity is an inward practice that impacts our outward life. Jesus warned us against the idolatry of our hearts that pushes us to always want more. Simplicity pushes back against the impulse to get more. Once we can relax our grip on our possessions we will be able to share freely with those who have need.'],
+   guideLabel: 'Weekly Guide',
+   guide: [
+     'As you continue your daily practices of solitude and scripture, take some time to consider your material possessions.',
+     'Choose one area of your home: it might be your closet, your kitchen, or your garage.',
+     'Identify those things that you haven’t worn or used in a year, and put them in a box.',
+     'Pray and ask the Lord if you know someone who needs any of those things. If the Lord brings someone to mind, offer them those items. If He doesn’t, take the box to Potter’s House Thrift Store (or any other appropriate ministry) and give them away.'
+   ],
+   practical: null,
+   discussion: [
+     'What are the material things you think about most? Is it houses and home decor? Is it transportation? Maybe it’s clothing or equipment related to your hobby. Do you ever get rid of anything from that category, or do you simply accumulate?',
+     'Share about a time you released something you owned and how that worked out for you.',
+     'How can you continue to simplify your life? Think through possessions, schedule, technology, distractions, etc.',
+     'What did the Lord reveal to you this week, if anything?'
+   ] },
+
+ { n: 12, roman: 'XII', title: 'Gratitude',
+   intro: ['In our final week of the study, we will reflect on our spiritual journey through the In the Upper Room With Jesus study, and engage in the spiritual practice of thanksgiving. We will take some time to acknowledge God’s abundant blessings in our lives, and express our gratitude for all the ways He sustains us.'],
+   guideLabel: 'Daily Guide',
+   guide: [
+     'Continue your daily practices of scripture and solitude.',
+     'This week, begin each morning with thanksgiving. Thank God for the gift of another day, and choose something in your life to acknowledge as a blessing, and express your gratitude to God, the giver of all good things (James 1:17).',
+     'Each day, write down three things that you are thankful for. Spend a moment thanking God for those things.',
+     'Look for an opportunity every day this week to tell someone what God has done in your life. Encouragement spreads when it is spoken aloud.'
+   ],
+   practical: null,
+   discussion: [
+     'How did the practice of starting each day with a moment of gratitude change your week? Is this a practice you could continue in the weeks ahead?',
+     'What are some things you wrote down on your gratitude list? Why did you choose those things to be thankful for?',
+     'What was rewarding and challenging about this practice this week?',
+     'How can you continue to make this a regular part of your spiritual rhythm after this week?',
+     'What did the Lord reveal to you this week, if anything?'
+   ] }
+];
+
+/* ── Abide state — one fixed blob, series-independent (see note above) ── */
+const ABIDE_LS = 'acts_abide';
+let abideData = { days: {}, resp: {}, ans: {} };
+try { abideData = Object.assign({ days: {}, resp: {}, ans: {} },
+        JSON.parse(localStorage.getItem(ABIDE_LS) || '{}')); } catch (e) {}
+function abPersist() { try { localStorage.setItem(ABIDE_LS, JSON.stringify(abideData)); } catch (e) {} }
+function abDays(n)     { return abideData.days[n] || [0,0,0,0,0,0,0]; }
+function abDayCount(n) { return abDays(n).filter(Boolean).length; }
+function abHasResp(n)  { return String(abideData.resp[n] || '').trim() !== ''; }
+function abAnswerCount(n) {
+  const w = ABIDE_WEEKS.find(x => x.n === n);
+  if (!w) return 0;
+  return w.discussion.filter(function (q, i) {
+    return String(abideData.ans[n + '_' + (i + 1)] || '').trim() !== '';
+  }).length;
+}
+function abHasContent(n) { return abHasResp(n) || abAnswerCount(n) > 0; }
+
+/* ── The tab ── */
+function abProgressHTML(n) {
+  const d = abDays(n);
+  return '<div class="ab-progress">'
+    + d.map(function (v) { return '<span class="ab-mini' + (v ? ' on' : '') + '"></span>'; }).join('')
+    + '<span class="ab-progress-cap">' + abDayCount(n) + ' of 7 days'
+    + (abHasResp(n) ? ' &nbsp;&middot;&nbsp; <span class="material-symbols-rounded ab-tick">check_circle</span> responded' : '')
+    + '</span></div>';
+}
+
+function abideWeekCardHTML(w) {
+  const n = w.n;
+  const intro = w.intro.map(function (p) { return '<p class="ab-p">' + esc(p) + '</p>'; }).join('');
+  const steps = '<div class="ab-h">' + esc(w.guideLabel) + '</div><ol class="ab-steps">'
+    + w.guide.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>';
+  const practical = w.practical
+    ? '<div class="ab-h">' + esc(w.practicalLabel || 'Getting Practical') + '</div><ul class="ab-tips">'
+      + w.practical.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>'
+    : '';
+  const prayer = w.prayer
+    ? '<div class="ab-prayer"><div class="ab-prayer-title">' + esc(w.prayer.title) + '</div>'
+      + '<div class="ab-prayer-lines">' + w.prayer.lines.map(esc).join('<br>') + '</div></div>'
+    : '';
+  const note = w.note ? '<p class="ab-note">' + esc(w.note) + '</p>' : '';
+  const days = abDays(n);
+  const challenge =
+    '<div class="ab-challenge">'
+    + '<div class="ab-h">This Week&rsquo;s Challenge</div>'
+    + '<p class="ab-prompt">Take up the practice — and mark each day you practice it.</p>'
+    + '<div class="ab-days">'
+    + days.map(function (v, i) {
+        return '<button class="ab-day' + (v ? ' done' : '') + '" onclick="abToggleDay(' + n + ',' + i + ',this)"'
+          + ' aria-pressed="' + (v ? 'true' : 'false') + '" aria-label="Day ' + (i + 1) + '">'
+          + '<span class="ab-day-num">' + (i + 1) + '</span>'
+          + '<span class="material-symbols-rounded ab-day-check">check</span></button>';
+      }).join('')
+    + '</div><div class="ab-days-cap" data-ab-cap="' + n + '">' + abDayCount(n) + ' of 7 days practiced</div></div>';
+  const respond =
+    '<div class="ab-respond">'
+    + '<div class="ab-h">Respond</div>'
+    + '<p class="ab-prompt">Based on this session, what is the Lord asking you to do differently in your life?</p>'
+    + '<textarea class="ab-input" data-ab-wk="' + n + '" rows="3" placeholder="Write your response&hellip;"'
+    + ' oninput="abRespInput(this)" onblur="abRespSave(this)">' + esc(abideData.resp[n] || '') + '</textarea>'
+    + '<div class="ab-saves"><span class="material-symbols-rounded">cloud_done</span>Saves as you type</div>'
+    + '</div>';
+  const discussion =
+    '<button class="card-cta" onclick="openAbideDiscussion(' + n + ')" style="margin:2px 16px 4px;width:calc(100% - 32px);">'
+    + '<span class="material-symbols-rounded cta-lead">forum</span>'
+    + '<span class="cta-label">Group Discussion'
+    + (abAnswerCount(n) ? ' &mdash; ' + abAnswerCount(n) + ' answered' : '')
+    + '</span><span class="material-symbols-rounded cta-arrow">arrow_forward</span></button>';
+  const share = abHasContent(n)
+    ? '<button class="card-cta card-cta--secondary" onclick="shareAbideWeek(' + n + ', this)" style="margin:0 16px 14px;width:calc(100% - 32px);">'
+      + '<span class="material-symbols-rounded cta-lead">ios_share</span>'
+      + '<span class="cta-label share-btn-label">Share Reflection</span></button>'
+    : '<div style="height:14px;"></div>';
+
+  return '<div class="biblical-card-header" onclick="toggleBiblicalCard(this.parentElement)">'
+    + '<div class="biblical-header-left">'
+    + '<div class="biblical-location">' + esc(w.title) + '</div>'
+    + '<div class="biblical-date-badge"><span class="material-symbols-rounded" style="font-size:14px;">spa</span>Week ' + w.roman + '</div>'
+    + '</div></div>'
+    + '<div class="devotion-preview" onclick="toggleBiblicalCard(this.closest(\'.biblical-card\'))">'
+    + abProgressHTML(n)
+    + '<div class="devotion-topics-callout"><span class="ab-callout-emoji">\uD83D\uDE4F</span>'
+    + 'The practice, the challenge &amp; your response'
+    + '<span class="material-symbols-rounded devotion-topics-chev biblical-chevron">expand_more</span></div>'
+    + '</div>'
+    + '<div class="biblical-body"><div class="ab-body">'
+    + intro + steps + practical + prayer + note + challenge + respond
+    + '</div>' + discussion + share + '</div>';
+}
+
+function buildAbideCards() {
+  const container = document.getElementById('abideCards');
+  if (!container || typeof ABIDE_WEEKS === 'undefined') return;
+  const intro = `
+    <div class="card ins-intro">
+      <div class="ins-intro-eyebrow">A companion to the study</div>
+      <h2 class="ins-intro-title">Abide</h2>
+      <p class="ins-intro-text">Twelve weeks of spiritual practices, one per week alongside the
+        study &mdash; solitude, fasting, scripture memory, confession, and more. Not novel, and not
+        complicated: practices Christians have kept for centuries, taken up together as a church
+        family.</p>
+    </div>
+    <div class="memory-verse" style="margin:0 0 14px;">
+      <div class="memory-verse-eyebrow"><span class="material-symbols-rounded">format_quote</span>The Invitation</div>
+      <div class="memory-verse-text">I am the vine; you are the branches. If you remain in me and I in you, you will bear much fruit; apart from me you can do nothing.</div>
+      <div class="memory-verse-ref">John 15:5<span class="memory-verse-ver">NIV</span></div>
+    </div>
+    <div class="card" style="margin-bottom:16px;"><div class="card-content">
+      <div class="wk-head"><span class="ab-callout-emoji" style="font-size:18px;">\uD83D\uDE4F</span><span>What is a spiritual practice?</span></div>
+      <div class="ab-body" style="padding:0;">
+      <p class="ab-p">In a fast-paced and distracted world, the voice of the Spirit may be hard to
+        hear, and the abiding presence of Jesus may seem impossible to experience. So what should we
+        do? Over these twelve weeks we engage a series of spiritual practices that help us abide in
+        His presence and hear the voice of His Spirit.</p>
+      <p class="ab-p">Committing to a &ldquo;spiritual discipline&rdquo; may sound daunting, but
+        Dallas Willard keeps it simple: <em>&ldquo;Any activity I can do by direct effort that will
+        eventually enable me to do what I currently cannot do by direct effort.&rdquo;</em></p>
+      <p class="ab-p">You are invited to participate as an individual, with a group of friends, with
+        a discipleship group, or in your community group &mdash; so that the Word of God and the
+        Spirit of God, alongside the people of God, may transform our hearts and minds in Christ
+        Jesus. Each week: read the practice, take up the challenge, mark the days you practice, and
+        write down what the Lord is asking of you.</p>
+      </div>
+    </div></div>`;
+  container.innerHTML = intro + ABIDE_WEEKS.map(function (w) {
+    return '<div class="card biblical-card" data-ab-week="' + w.n + '">' + abideWeekCardHTML(w) + '</div>';
+  }).join('');
+}
+
+function refreshAbideCard(n) {
+  const card = document.querySelector('#abideCards .biblical-card[data-ab-week="' + n + '"]');
+  const w = ABIDE_WEEKS.find(function (x) { return x.n === n; });
+  if (!card || !w) return;
+  const wasOpen = card.classList.contains('expanded');
+  card.innerHTML = abideWeekCardHTML(w);
+  card.classList.toggle('expanded', wasOpen);
+}
+
+/* Day circles: flip in place — no full re-render while the card is open. */
+function abToggleDay(n, i, btn) {
+  const d = abDays(n).slice();
+  d[i] = d[i] ? 0 : 1;
+  abideData.days[n] = d;
+  abPersist();
+  btn.classList.toggle('done', !!d[i]);
+  btn.setAttribute('aria-pressed', d[i] ? 'true' : 'false');
+  const cap = document.querySelector('[data-ab-cap="' + n + '"]');
+  if (cap) cap.textContent = abDayCount(n) + ' of 7 days practiced';
+  const card = document.querySelector('#abideCards .biblical-card[data-ab-week="' + n + '"] .ab-progress');
+  if (card) card.outerHTML = abProgressHTML(n);
+}
+
+/* Response journal: plain text, debounced, flushed on blur. */
+let _abRespTimer = null;
+function abRespInput(el) {
+  clearTimeout(_abRespTimer);
+  _abRespTimer = setTimeout(function () { abRespSave(el); }, 400);
+}
+function abRespSave(el) {
+  clearTimeout(_abRespTimer);
+  const n = parseInt(el.dataset.abWk, 10);
+  if (!n) return;
+  if ((abideData.resp[n] || '') === el.value) return;
+  abideData.resp[n] = el.value;
+  abPersist();
+  const card = document.querySelector('#abideCards .biblical-card[data-ab-week="' + n + '"] .ab-progress');
+  if (card) card.outerHTML = abProgressHTML(n);
+}
+
+/* ── Group Discussion — the shared script modal, abide-keyed answers.
+   The answer boxes carry data-ab-ans (NOT data-note-key), so dqFlush skips
+   them; abFlush below is their commit path, called from closeScriptModal. ── */
+function openAbideDiscussion(n) {
+  const w = ABIDE_WEEKS.find(function (x) { return x.n === n; });
+  if (!w) return;
+  currentScriptId = null; currentScriptRef = ''; currentScriptDayKey = null;
+  clearActiveVerse();
+  document.getElementById('script-modal-title').textContent = 'Abide · Week ' + w.roman;
+  document.getElementById('script-modal-body').innerHTML =
+    '<div class="script-ep-title">Discussion</div>'
+    + '<div class="script-ep-sub">' + esc(w.title) + ' &nbsp;&middot;&nbsp; Week ' + n + ' of 12</div>'
+    + '<div class="dq-list">'
+    + w.discussion.map(function (q, i) {
+        const k = n + '_' + (i + 1);
+        return '<div class="dq-item">'
+          + '<div class="dq-q"><span class="dq-num">' + (i + 1) + '</span><span class="dq-qtext">' + esc(q) + '</span></div>'
+          + '<textarea class="dq-input" data-ab-ans="' + k + '" rows="3" placeholder="Your thoughts&hellip;"'
+          + ' aria-label="Your answer to question ' + (i + 1) + '"'
+          + ' oninput="abAnsInput(this)" onblur="abAnsSave(this)">' + esc(abideData.ans[k] || '') + '</textarea>'
+          + '</div>';
+      }).join('')
+    + '</div>'
+    + '<div class="dq-status dq-status--saved"><span class="material-symbols-rounded">cloud_done</span><span>Answers save as you type</span></div>';
+  applyScriptFontScale();
+  document.getElementById('script-modal').classList.add('open');
+  requestAnimationFrame(_fitSheets);
+  document.body.style.overflow = 'hidden';
+  document.querySelectorAll('#script-modal-body .dq-input').forEach(dqAutoGrow);
+}
+
+let _abAnsTimer = null;
+function abAnsInput(el) {
+  dqAutoGrow(el);
+  clearTimeout(_abAnsTimer);
+  _abAnsTimer = setTimeout(function () { abAnsSave(el); }, 400);
+}
+function abAnsSave(el) {
+  clearTimeout(_abAnsTimer);
+  const k = el.dataset.abAns;
+  if (!k) return;
+  abideData.ans[k] = el.value;
+  abPersist();
+}
+function abFlush() {
+  clearTimeout(_abAnsTimer);
+  const boxes = document.querySelectorAll('#script-modal-body [data-ab-ans]');
+  if (!boxes.length) return;
+  let wk = null;
+  boxes.forEach(function (el) {
+    abideData.ans[el.dataset.abAns] = el.value;
+    wk = parseInt(el.dataset.abAns, 10);
+  });
+  abPersist();
+  if (wk && activeSection === 'explore') refreshAbideCard(wk);
+}
+
+/* Share: response + answered questions. All PLAIN text (textarea values) —
+   deliberately not _notesToText, same reasoning as the Discussion share. */
+function shareAbideWeek(n, btn) {
+  const w = ABIDE_WEEKS.find(function (x) { return x.n === n; });
+  if (!w) return;
+  const parts = [];
+  const r = String(abideData.resp[n] || '').trim();
+  if (r) parts.push('What is the Lord asking me to do differently?\n' + r);
+  w.discussion.forEach(function (q, i) {
+    const a = String(abideData.ans[n + '_' + (i + 1)] || '').trim();
+    if (a) parts.push((i + 1) + '. ' + q + '\n' + a);
+  });
+  if (!parts.length) { _shareBtnSay(btn, 'Nothing to share yet'); return; }
+  const title = 'Abide — Week ' + n + ' — ' + w.title;
+  _shareOut(title, title + '\n\n' + parts.join('\n\n'), btn);
+}
+
+/* ── The Insights page, relocated to a header-menu overlay ── */
+function openInsightsPage() {
+  const el = document.getElementById('insights-overlay');
+  if (!el) return;
+  if (typeof buildExploreCards === 'function') buildExploreCards();
+  const body = document.getElementById('insights-body');
+  if (body) body.scrollTop = 0;
+  el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeInsightsPage() {
+  const el = document.getElementById('insights-overlay');
+  if (!el) return;
+  el.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 /* Study tab -> the essay for that week */
 function goToInsight(wk) {
   goToTab('explore');
@@ -14584,6 +15236,7 @@ function init() {
   if (typeof updateSeriesChrome === 'function') updateSeriesChrome();
   buildBiblicalCards();
   buildExploreCards();
+  if (typeof buildAbideCards === 'function') buildAbideCards();
   requestAnimationFrame(fitCardTitles);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitCardTitles);
   let _fitT;
@@ -15025,6 +15678,21 @@ function _onCtaScroll() {
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- Insights — the Passage Introductions page, moved off the bottom nav into
+     the header menu when Abide took its tab. #exploreCards lives here now;
+     buildExploreCards() renders into it exactly as before. -->
+<div id="insights-overlay" class="guide-overlay" role="dialog" aria-modal="true" aria-label="Insights">
+  <div class="guide-app-bar">
+    <button class="icon-btn" onclick="closeInsightsPage()" aria-label="Back">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <span class="guide-app-bar-title">Insights &nbsp;&middot;&nbsp; Passage Introductions</span>
+  </div>
+  <div class="guide-body" id="insights-body">
+    <div class="insights-inner"><div id="exploreCards"></div></div>
   </div>
 </div>
 
