@@ -3299,6 +3299,9 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
   font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--devotion-gold); margin: 16px 0 8px;
 }
+.ab-intro-quote { font-family: 'IBM Plex Serif', Georgia, serif; font-style: italic; font-size: 15.5px; line-height: 1.65; text-align: center; color: var(--md-sys-color-on-surface); margin: 20px 18px; }
+.ab-intro-vine { display: flex; justify-content: center; margin: 28px 0 10px; }
+.ab-intro-vine svg { width: 84px; height: 84px; color: var(--md-sys-color-on-surface); opacity: 0.85; }
 .ab-steps { margin: 0 0 4px; padding-left: 22px; }
 .ab-today-ref { font-weight: 600; color: var(--md-sys-color-primary); white-space: nowrap; }
 .ab-steps li { font-size: 14px; line-height: 1.55; color: var(--md-sys-color-on-surface); margin: 0 0 9px; }
@@ -15184,9 +15187,26 @@ function abHasContent(n) { return abHasResp(n) || abAnswerCount(n) > 0; }
    page. Every week keeps the framing the owner specified, in this order:
    1 the "companion to the study" intro · 2 the week's practice ·
    3 the John 15:5 invitation · 4 the Willard "what is a practice" card. ── */
+const ABIDE_INTRO_HTML = '<div class="intro-page">'
+  + '<div class="guide-eyebrow">Abide</div>'
+  + '<h1 class="guide-display">Introduction</h1>'
+  + '<p class="script-body">As our church studies the Upper Room Discourse, Jesus&rsquo; final night together with his disciples recorded for us in John 13-17, we will get an up-close and personal perspective on what it looks like to spend time with Jesus. He teaches his disciples, and us by extension, to live our lives with a constant sense of his abiding presence at work in and through us.</p>'
+  + '<p class="script-body">What does it look like to abide with Jesus, though? This question is perhaps most pressing in today&rsquo;s screen-saturated, noisy, distracted world. Philosopher James K.A. Smith rightly comments that &ldquo;the frenetic pace of our lives means we often end up falling into routines without much reflection,&rdquo; and these routines often shape us more than we realize.</p>'
+  + '<p class="script-body">In such a fast-paced and distracted world, the voice of the Spirit may be hard to hear, and the abiding presence of Jesus may seem impossible to experience.</p>'
+  + '<p class="script-body">So what should we do?</p>'
+  + '<p class="script-body">As a church family, we desire to draw near to Jesus together. To do this, we will take the next twelve weeks to not only study the Upper Room Discourse in our teaching series and many of our small groups, but also to engage in a series of spiritual practices that will help us to abide in His presence and hear the voice of His Spirit.</p>'
+  + '<p class="script-body">These practices, or spiritual disciplines, are not novel or new. Many of these are practices that you may have engaged in before and some may be practices you&rsquo;ve never tried.</p>'
+  + '<p class="script-body">Committing to a &ldquo;spiritual discipline&rdquo; may sound daunting at first, but let&rsquo;s keep it simple. Dallas Willard defines a spiritual discipline as:</p>'
+  + '<p class="ab-intro-quote">Any activity I can do by direct effort that will eventually enable me to do what I currently cannot do by direct effort.</p>'
+  + '<p class="script-body">To illustrate this really simply: let&rsquo;s say you want to learn how to play the piano. If you&rsquo;ve never played, then almost certainly you cannot play the piano by direct effort right now. To actually be able to play, you&rsquo;ll need to discipline yourself, through direct effort, to build the skillset to be able to play. So you learn hand positions, you learn notes, you learn how the keys work. These are things you are able to do by direct effort, so that eventually you can sit down and just play.</p>'
+  + '<p class="script-body">These practices will build on each other, week by week. By adopting these spiritual rhythms as a church family, we are inviting the Holy Spirit to work in and through us to change Northwest Arkansas and the world. We hope that by spending this quarter of the year intentionally focusing on these practices together, we might form new spiritual habits that last a lifetime and help shape us to look more like Jesus.</p>'
+  + '<p class="script-body">So as a church family, we invite you to follow this spiritual guide over the next twelve weeks. We invite you to participate as an individual, with a group of friends, with a discipleship group, or in your community group, so that the Word of God, the Spirit of God, alongside the people of God may transform our hearts and our minds (and yes, our lives themselves) in Christ Jesus.</p>'
+  + '<div class="ab-intro-vine"><svg aria-hidden="true" focusable="false"><use href="#vine"/></svg></div>'
+  + '</div>';
+
 function abideCur() {
   const n = parseInt(abideData.cur, 10);
-  return (n >= 1 && n <= ABIDE_WEEKS.length) ? n : 1;
+  return (n >= 0 && n <= ABIDE_WEEKS.length) ? n : 1;   // 0 = Intro
 }
 
 /* The Study tab drives where the user lands. Abide's twelve weeks parallel the
@@ -15197,7 +15217,7 @@ function abideWeekFromStudy() {
       && activeSeries === currentSeriesId()) {
     const n = parseInt(activeWeek, 10);
     if (n >= 1) return Math.min(n, ABIDE_WEEKS.length);
-    return 1;   // Intro maps to Week 1
+    return 0;   // Study's Intro lands on the Abide Intro
   }
   return abideCur();
 }
@@ -15336,26 +15356,33 @@ function abideWeekCardHTML(w) {
 }
 
 function abideNavHTML(n) {
-  const prev = n > 1 ? n - 1 : null;
+  const prev = n > 0 ? n - 1 : null;
   const next = n < ABIDE_WEEKS.length ? n + 1 : null;
+  const label = function (k) { return k === null ? '' : k === 0 ? 'Intro' : 'Week ' + k; };
   return '<div class="wk-nav">'
     + '<button class="wk-nav-btn" ' + (prev === null ? 'disabled' : '') + ' onclick="setAbideWeek(' + prev + ');wkScrollTop()">'
-    + '<span class="material-symbols-rounded">arrow_back</span> ' + (prev === null ? '' : 'Week ' + prev) + '</button>'
+    + '<span class="material-symbols-rounded">arrow_back</span> ' + label(prev) + '</button>'
     + '<button class="wk-nav-btn" ' + (next === null ? 'disabled' : '') + ' onclick="setAbideWeek(' + next + ');wkScrollTop()">'
-    + (next === null ? '' : 'Week ' + next) + ' <span class="material-symbols-rounded">arrow_forward</span></button>'
+    + label(next) + ' <span class="material-symbols-rounded">arrow_forward</span></button>'
     + '</div>';
 }
 
 function renderAbideWeek(n) {
   const c = document.getElementById('abideCards');
+  if (!c) return;
+  if (n === 0) {
+    c.innerHTML = ABIDE_INTRO_HTML + abideNavHTML(0);
+    c.classList.remove('day-fade'); void c.offsetWidth; c.classList.add('day-fade');
+    return;
+  }
   const w = ABIDE_WEEKS.find(function (x) { return x.n === n; });
-  if (!c || !w) return;
+  if (!w) return;
   c.innerHTML = abIntroCardHTML() + abideWeekCardHTML(w) + abInvitationHTML() + abWhatIsHTML() + abideNavHTML(n);
   c.classList.remove('day-fade'); void c.offsetWidth; c.classList.add('day-fade');
 }
 
 function setAbideWeek(n) {
-  if (!(n >= 1 && n <= ABIDE_WEEKS.length)) n = 1;
+  if (!(n >= 0 && n <= ABIDE_WEEKS.length)) n = 1;
   abideData.cur = n;
   abPersist();
   document.querySelectorAll('#abideChipsScroll .day-chip').forEach(function (ch) {
@@ -15373,14 +15400,16 @@ function buildAbideCards() {
   const sc = document.getElementById('abideChipsScroll');
   if (sc && typeof ABIDE_WEEKS !== 'undefined') {
     sc.innerHTML = '';
-    ABIDE_WEEKS.forEach(function (w) {
+    const mk = function (label, wk) {
       const chip = document.createElement('button');
-      chip.className = 'day-chip day-chip--wk' + (w.n === abideCur() ? ' active' : '');
-      chip.textContent = 'Wk ' + w.n;
-      chip.dataset.wk = w.n;
-      chip.addEventListener('click', function () { setAbideWeek(w.n); if (typeof wkScrollTop === 'function') wkScrollTop(); });
+      chip.className = 'day-chip day-chip--wk' + (wk === abideCur() ? ' active' : '');
+      chip.textContent = label;
+      chip.dataset.wk = wk;
+      chip.addEventListener('click', function () { setAbideWeek(wk); if (typeof wkScrollTop === 'function') wkScrollTop(); });
       sc.appendChild(chip);
-    });
+    };
+    mk('Intro', 0);
+    ABIDE_WEEKS.forEach(function (w) { mk('Wk ' + w.n, w.n); });
   }
   renderAbideWeek(abideCur());
 }
@@ -15409,7 +15438,7 @@ function initAbideSwipe() {
     x0 = null;
     if (lock === 'h' && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2 && dt < 700) {
       const target = abideCur() + (dx < 0 ? 1 : -1);
-      if (target >= 1 && target <= ABIDE_WEEKS.length) { setAbideWeek(target); wkScrollTop(); }
+      if (target >= 0 && target <= ABIDE_WEEKS.length) { setAbideWeek(target); wkScrollTop(); }
     }
   }, { passive: true });
 }
