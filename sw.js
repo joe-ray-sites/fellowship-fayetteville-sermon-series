@@ -2,7 +2,7 @@
 // Precaches the app shell + displayed images so the app works offline after
 // the first online visit. Audio/video stream (not precached). The unused
 // full-size day itinerary PNGs are intentionally excluded.
-const CACHE = 'acts-fellowship-v63';
+const CACHE = 'acts-fellowship-v64';
 const PRECACHE = [
   "./",
   "index.html",

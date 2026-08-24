@@ -13946,13 +13946,16 @@ function buildWeekChips() {
   }
 }
 
-/* The current study follows the calendar, with Sunday-start weeks: the Intro
-   week runs through Sat Sept 12 2026, Week 1 is Sun Sept 13 – Sat Sept 19, and
+/* The current study follows the calendar, with Sunday-start weeks: Intro
+   through Sat Sept 5 2026, Week 1 (Overview) is Sun Sept 6 – Sat Sept 12, and
    each later week turns over seven days after the one before it, clamped to
-   the series' last week. Past series have no calendar — they keep their
-   last-viewed week. */
+   the series' last week. This is the SAME anchor the Abide daily plan uses
+   (abideDailyRef), so on any date the Study week's readings are the ones the
+   Abide guide names — e.g. Sun Sept 13 is Week 2, whose Day 1 reading is
+   John 13:1–20. Past series have no calendar — they keep their last-viewed
+   week. */
 function calendarStudyWeek() {
-  const wk1 = new Date(2026, 8, 13);   // Sun Sept 13 2026 (month is 0-indexed)
+  const wk1 = new Date(2026, 8, 6);   // Sun Sept 6 2026 (month is 0-indexed)
   const today = new Date();
   const diff = Math.floor((new Date(today.getFullYear(), today.getMonth(), today.getDate()) - wk1) / 86400000);
   if (diff < 0) return WK_INTRO;
