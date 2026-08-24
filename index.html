@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<script>(function(){try{var t=localStorage.getItem('acts-theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}/* Hold the Home entrance on EVERY load. It is released by startHomeIntro(), which runs after init() has bound the series — so the hero never animates over content that is about to be swapped. */document.documentElement.classList.add('pre-splash');})();</script>
+<script>(function(){try{var t=localStorage.getItem('acts-theme')||'light';document.documentElement.setAttribute('data-theme',t);if(localStorage.getItem('acts-mono')==='1'){document.documentElement.setAttribute('data-mono','1');}}catch(e){}/* Hold the Home entrance on EVERY load. It is released by startHomeIntro(), which runs after init() has bound the series — so the hero never animates over content that is about to be swapped. */document.documentElement.classList.add('pre-splash');})();</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Fellowship Fayetteville</title>
@@ -3300,6 +3300,7 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
   color: var(--devotion-gold); margin: 16px 0 8px;
 }
 .ab-steps { margin: 0 0 4px; padding-left: 22px; }
+.ab-today-ref { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: var(--md-sys-color-primary); white-space: nowrap; }
 .ab-steps li { font-size: 14px; line-height: 1.55; color: var(--md-sys-color-on-surface); margin: 0 0 9px; }
 .ab-tips { margin: 0 0 4px; padding-left: 20px; }
 .ab-tips li { font-size: 13.5px; line-height: 1.55; color: var(--md-sys-color-on-surface-variant); margin: 0 0 8px; }
@@ -3383,6 +3384,90 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
 /* The relocated Insights page: a reading measure inside the overlay. */
 .insights-inner { max-width: 640px; margin: 0 auto; }
 #insights-overlay .guide-body { padding: 14px 14px 64px; }
+
+/* ── COLORBLIND MODE — pure black & white, no colour and no shading.
+   html[data-mono="1"] is set before first paint (head script, acts-mono) and
+   toggled from the header menu. The token override covers everything the
+   palette drives; the rules after it handle imagery, the shadows that used to
+   separate surfaces, and the Upper Room home's hard-coded colours. Last in
+   the stylesheet on purpose — it must win by position as well as specificity. */
+html[data-mono="1"] {
+  --md-sys-color-primary: #000000;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #FFFFFF;
+  --md-sys-color-secondary: #000000;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #FFFFFF;
+  --md-sys-color-tertiary: #000000;
+  --md-sys-color-background: #FFFFFF;
+  --md-sys-color-on-background: #000000;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-surface-variant: #FFFFFF;
+  --md-sys-color-surface-container: #FFFFFF;
+  --md-sys-color-on-surface: #000000;
+  --md-sys-color-on-surface-variant: #000000;
+  --md-sys-color-outline: #000000;
+  --md-sys-color-outline-variant: #000000;
+  --md-sys-color-error: #000000;
+  --md-sys-color-nav-bg: #FFFFFF;
+  --md-sys-color-nav-indicator: #000000;
+  --md-sys-color-shadow: transparent;
+  --journal-red: #000000;
+  --journal-red-hover: #000000;
+  --journal-red-on: #FFFFFF;
+  --journal-red-edge: #000000;
+  --devotion-gold: #000000;
+  --devotion-gold-strong: #000000;
+  --devotion-gold-bg: #FFFFFF;
+  --devotion-gold-bg-2: #FFFFFF;
+  --devotion-gold-border: #000000;
+  --md-sys-elevation-1: none;
+  --md-sys-elevation-2: none;
+  --md-sys-elevation-3: none;
+}
+/* The active nav icon sits ON the (now black) indicator pill — invert it.
+   The label sits below the pill and stays black. */
+html[data-mono="1"] .nav-tab.active .material-symbols-rounded { color: #FFFFFF; }
+/* Flat white needs drawn edges where shadows used to separate surfaces. */
+html[data-mono="1"] .card { border: 1px solid #000000; }
+html[data-mono="1"] .top-app-bar { border-bottom: 1px solid #000000; }
+html[data-mono="1"] .bottom-nav { border-top: 1px solid #000000; }
+html[data-mono="1"] .header-menu { border: 1px solid #000000; }
+/* Photography and artwork go black & white. */
+html[data-mono="1"] img { filter: grayscale(1); }
+html[data-mono="1"] .home-hero-bg { filter: grayscale(1) brightness(0.65); }
+html[data-mono="1"] .cta-bg { filter: grayscale(1) brightness(0.6); }
+html[data-mono="1"] #splash { filter: grayscale(1); }
+/* User-picked note colours and highlights render monochrome while the mode
+   is on (the stored notes keep their colours). */
+html[data-mono="1"] .notes-editor { filter: grayscale(1); }
+html[data-mono="1"] .hl-w.hl-c1, html[data-mono="1"] .hl-w.hl-c2,
+html[data-mono="1"] .hl-w.hl-c3, html[data-mono="1"] .hl-w.hl-c4,
+html[data-mono="1"] .hl-w.hl-c5 { background-color: #DDDDDD; }
+/* Literal paper tints normalise to the (white) surface. */
+html[data-mono="1"] .ins-card { background: var(--md-sys-color-surface); }
+html[data-mono="1"] .sp-plate { background: #FFFFFF; }
+/* The eyebrow rules + dashes are gold literals on every home's hero/CTA
+   bands (photo or black ground) — white reads on both. */
+html[data-mono="1"] .hero-eyebrow, html[data-mono="1"] .cta-eyebrow { color: #FFFFFF; }
+html[data-mono="1"] .hero-eyebrow::before, html[data-mono="1"] .cta-eyebrow::before { background: #FFFFFF; }
+/* The Upper Room home keeps its black ground; only the colour leaves it. */
+html[data-mono="1"] body[data-series="upperroom"] #section-home,
+html[data-mono="1"] body[data-series="upperroom"] .cta-band { background: #000000; }
+html[data-mono="1"] body[data-series="upperroom"] .home-hero-bg { background: #000000; }
+html[data-mono="1"] body[data-series="upperroom"] .home-hero-bg img { filter: grayscale(1) contrast(1.04) brightness(0.92); }
+html[data-mono="1"] body[data-series="upperroom"] .cta-bg { filter: none; }
+html[data-mono="1"] body[data-series="upperroom"] .cta-bg img { filter: grayscale(1) contrast(1.02) brightness(0.62); }
+html[data-mono="1"] body[data-series="upperroom"] .hero-eyebrow,
+html[data-mono="1"] body[data-series="upperroom"] .cta-eyebrow,
+html[data-mono="1"] body[data-series="upperroom"] .hero-h1,
+html[data-mono="1"] body[data-series="upperroom"] .cta-title,
+html[data-mono="1"] body[data-series="upperroom"] .hero-scroll-caret,
+html[data-mono="1"] body[data-series="upperroom"] .hero-logo-float,
+html[data-mono="1"] body[data-series="upperroom"] .cta-text { color: #FFFFFF; }
+html[data-mono="1"] body[data-series="upperroom"] .cta-band + .cta-band { border-top-color: #FFFFFF; }
+/* Buttons on the black home invert, or a black button disappears into it. */
+html[data-mono="1"] body[data-series="upperroom"] .cta-btn { background: #FFFFFF; color: #000000; border-color: #FFFFFF; }
 </style>
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
 <link rel="manifest" href="manifest.json">
@@ -3527,6 +3612,9 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
 <div class="header-menu" id="headerMenu" role="menu">
   <button class="header-menu-item" onclick="toggleTheme()" role="menuitem">
     <span class="material-symbols-rounded" id="themeIcon">dark_mode</span><span>Theme</span>
+  </button>
+  <button class="header-menu-item" onclick="toggleMono()" role="menuitem">
+    <span class="material-symbols-rounded">contrast</span><span id="monoLabel">Colorblind Mode</span>
   </button>
   <button class="header-menu-item" onclick="closeHeaderMenu(); openGuide();" role="menuitem">
     <span class="material-symbols-rounded">help</span><span>How to Use This Guide</span>
@@ -4452,6 +4540,24 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('acts-theme', next);
   updateThemeIcon(next);
+}
+
+/* Colorblind Mode — pure black & white. The attribute is set before first
+   paint by the head script; these just toggle and label it. Sits on top of
+   either theme (the token override wins over both). */
+function initMono() {
+  updateMonoLabel(document.documentElement.getAttribute('data-mono') === '1');
+}
+function updateMonoLabel(on) {
+  const el = document.getElementById('monoLabel');
+  if (el) el.textContent = on ? 'Colorblind Mode: On' : 'Colorblind Mode';
+}
+function toggleMono() {
+  const on = document.documentElement.getAttribute('data-mono') !== '1';
+  if (on) document.documentElement.setAttribute('data-mono', '1');
+  else document.documentElement.removeAttribute('data-mono');
+  try { localStorage.setItem('acts-mono', on ? '1' : '0'); } catch (e) {}
+  updateMonoLabel(on);
 }
 
 // Section navigation
@@ -15093,6 +15199,29 @@ function abideWeekFromStudy() {
   return abideCur();
 }
 
+/* TODAY's reading in the study's daily plan, for the "read today's passage"
+   guide steps. The plan starts Sun Sept 6 2026 with Week 1's (Overview)
+   readings — one week AHEAD of the sermon calendar, so during the calendar's
+   Week 1 (Sept 13–19) the readings are Week 2's: Day 1 is John 13:1–20, read
+   before that Sunday's "Jesus Washes" sermon. Reads SERIES.upperroom directly
+   (not the bound series) because Abide is one program regardless of which
+   series the user is browsing. Clamped to the plan's first and last day. */
+function abideDailyRef() {
+  try {
+    const weeks = (typeof SERIES !== 'undefined' && SERIES.upperroom && SERIES.upperroom.weeks) || [];
+    if (!weeks.length) return null;
+    const anchor = new Date(2026, 8, 6);   // Sun Sept 6 2026 (month is 0-indexed)
+    const now = new Date();
+    let days = Math.floor((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - anchor) / 86400000);
+    const total = weeks.length * 7;
+    if (days < 0) days = 0;
+    if (days >= total) days = total - 1;
+    const w = weeks[Math.floor(days / 7)];
+    const r = w && w.readings && w.readings[days % 7];
+    return r ? r.ref : null;
+  } catch (e) { return null; }
+}
+
 function abProgressHTML(n) {
   const d = abDays(n);
   return '<div class="ab-progress">'
@@ -15149,8 +15278,15 @@ function abWhatIsHTML() {
 function abideWeekCardHTML(w) {
   const n = w.n;
   const intro = w.intro.map(function (p) { return '<p class="ab-p">' + esc(p) + '</p>'; }).join('');
+  const todayRef = (typeof abideDailyRef === 'function') ? abideDailyRef() : null;
   const steps = '<div class="ab-h">' + esc(w.guideLabel) + '</div><ol class="ab-steps">'
-    + w.guide.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>';
+    + w.guide.map(function (s) {
+        let t = esc(s);
+        // Weeks 1–2 say "read today's passage slowly" — name the actual passage
+        // for today, so the step changes with the calendar day.
+        if (todayRef) t = t.replace(/today\u2019s passage/g, '<strong class="ab-today-ref">' + esc(todayRef) + '</strong>');
+        return '<li>' + t + '</li>';
+      }).join('') + '</ol>';
   const practical = w.practical
     ? '<div class="ab-h">' + esc(w.practicalLabel || 'Getting Practical') + '</div><ul class="ab-tips">'
       + w.practical.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>'
@@ -15434,6 +15570,7 @@ function init() {
     if (d10 && d9 && d9.bibleKnowledge) { d10.bibleContext = d9.bibleKnowledge; d10.bibleContextDay = 9; }
   })();
   initTheme();
+  if (typeof initMono === 'function') initMono();
   updateCountdown();
   buildDestinationChips();
   buildWeekChips();
