@@ -1926,7 +1926,7 @@ main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ── BIBLICAL Section ── */
-#section-biblical { padding: 0; }
+#section-biblical, #section-explore { padding: 12px 0 0; }
 .biblical-card {
   margin-bottom: 16px;
   border-radius: 16px;
@@ -13840,12 +13840,13 @@ function buildWeekChips() {
   }
 }
 
-/* The current study follows the calendar: the Intro week runs Sept 5–11 2026,
-   Week 1 starts Sept 12, and each later week turns over seven days after the
-   one before it, clamped to the series' last week. Past series have no
-   calendar — they keep their last-viewed week. */
+/* The current study follows the calendar, with Sunday-start weeks: the Intro
+   week runs through Sat Sept 12 2026, Week 1 is Sun Sept 13 – Sat Sept 19, and
+   each later week turns over seven days after the one before it, clamped to
+   the series' last week. Past series have no calendar — they keep their
+   last-viewed week. */
 function calendarStudyWeek() {
-  const wk1 = new Date(2026, 8, 12);   // Sept 12 2026 (month is 0-indexed)
+  const wk1 = new Date(2026, 8, 13);   // Sun Sept 13 2026 (month is 0-indexed)
   const today = new Date();
   const diff = Math.floor((new Date(today.getFullYear(), today.getMonth(), today.getDate()) - wk1) / 86400000);
   if (diff < 0) return WK_INTRO;
