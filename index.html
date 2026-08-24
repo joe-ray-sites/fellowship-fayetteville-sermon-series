@@ -1926,7 +1926,7 @@ main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ── BIBLICAL Section ── */
-#section-biblical { padding: 12px 16px 16px; }
+#section-biblical { padding: 0; }
 .biblical-card {
   margin-bottom: 16px;
   border-radius: 16px;
@@ -3648,12 +3648,14 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
 
   <!-- NOTES -->
   <section id="section-explore" class="section">
-    <div id="abideCards"></div>
+    <div class="day-chips-scroll" id="abideChipsScroll"></div>
+    <div class="day-detail" id="abideCards"></div>
   </section>
 
   <!-- BIBLICAL -->
   <section id="section-biblical" class="section">
-    <div id="biblicalCards"></div>
+    <div class="day-chips-scroll" id="devotionChipsScroll"></div>
+    <div class="day-detail" id="biblicalCards"></div>
   </section>
 
   <!-- PODCASTS -->
@@ -4474,9 +4476,11 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
       setActiveWeek(activeWeek);
     }
     if (section === 'explore') {
+      if (typeof setAbideWeek === 'function') setAbideWeek(abideWeekFromStudy());
       requestAnimationFrame(playExploreIntro);
     }
     if (section === 'biblical') {
+      if (typeof setDevotionWeek === 'function') setDevotionWeek(devotionWeekFromStudy());
       requestAnimationFrame(() => playCardIntro('biblicalCards'));
     }
     if (section === 'podcasts') {
@@ -13605,6 +13609,9 @@ function reloadContentStores() {
   try { readingDone     = JSON.parse(localStorage.getItem(SERIES_KEY + 'readings')   || '{}') || {}; }  catch (e) { readingDone = {}; }
   try { exploredStops   = JSON.parse(localStorage.getItem(SERIES_KEY + 'explored')   || '{}') || {}; }  catch (e) { exploredStops = {}; }
   activeWeek = parseInt(localStorage.getItem(SERIES_KEY + 'activeWeek') || '0', 10);  // 0 = Intro
+  // The current study opens on the calendar week, not the last-viewed one.
+  if (typeof calendarStudyWeek === 'function' && typeof currentSeriesId === 'function'
+      && activeSeries === currentSeriesId()) activeWeek = calendarStudyWeek();
   // The adhoc series' weeks are user data, not a literal — re-read them here so
   // ACTS_WEEKS points at what the user actually saved.
   if (typeof adhocLoad === 'function' && activeSeries === 'adhoc') ACTS_WEEKS = adhocLoad();
@@ -13831,6 +13838,19 @@ function buildWeekChips() {
     add.addEventListener('click', adhocAddWeek);
     container.appendChild(add);
   }
+}
+
+/* The current study follows the calendar: the Intro week runs Sept 5–11 2026,
+   Week 1 starts Sept 12, and each later week turns over seven days after the
+   one before it, clamped to the series' last week. Past series have no
+   calendar — they keep their last-viewed week. */
+function calendarStudyWeek() {
+  const wk1 = new Date(2026, 8, 12);   // Sept 12 2026 (month is 0-indexed)
+  const today = new Date();
+  const diff = Math.floor((new Date(today.getFullYear(), today.getMonth(), today.getDate()) - wk1) / 86400000);
+  if (diff < 0) return WK_INTRO;
+  const last = ACTS_WEEKS.length ? ACTS_WEEKS[ACTS_WEEKS.length - 1].n : 1;
+  return Math.min(Math.floor(diff / 7) + 1, last);
 }
 
 function setActiveWeek(n) {
@@ -14076,7 +14096,7 @@ function devotionCardHTML(w) {
   const total = w.readings.length;
   const notesK = wkNoteKey(n, 'qt');
   return `
-    <div class="biblical-card-header" onclick="toggleBiblicalCard(this.parentElement)">
+    <div class="biblical-card-header" style="cursor:default;">
       <div class="biblical-header-left">
         <div class="biblical-location">${esc(w.ref)}</div>
         <div class="biblical-date-badge">
@@ -14085,7 +14105,7 @@ function devotionCardHTML(w) {
         </div>
       </div>
     </div>
-    <div class="devotion-preview" onclick="toggleBiblicalCard(this.closest('.biblical-card'))">
+    <div class="devotion-preview">
       ${w.verse ? `<div class="memory-verse">
         <div class="memory-verse-eyebrow"><span class="material-symbols-rounded">format_quote</span>Memory Verse</div>
         <div class="memory-verse-text">${esc(w.verse.text)}</div>
@@ -14098,7 +14118,6 @@ function devotionCardHTML(w) {
       <div class="devotion-topics-callout">
         <span class="material-symbols-rounded devotion-topics-icon">auto_stories</span>
         ${total} Daily Readings for Quiet Time
-        <span class="material-symbols-rounded devotion-topics-chev biblical-chevron">expand_more</span>
       </div>
     </div>
     <div class="biblical-body">
@@ -14145,31 +14164,127 @@ function devotionCardHTML(w) {
   `;
 }
 
+/* ── Week-paged, like the Study and Abide tabs: a chip strip across the top,
+   one week's Quiet Time per page. The Study tab drives where the user lands
+   (see the tab-switch handler); within the tab the chips, swipe and pager move
+   between weeks. devotionWeek is in-memory only — the landing week is always
+   re-derived from the Study week, so nothing needs persisting. ── */
+let devotionWeek = 0;
+
+function devClampWeek(n) {
+  if (!ACTS_WEEKS.length) return 0;
+  n = parseInt(n, 10);
+  if (ACTS_WEEKS.some(w => w.n === n)) return n;
+  if (!(n > ACTS_WEEKS[0].n)) return ACTS_WEEKS[0].n;   // Intro (0) and NaN land on the first week
+  return ACTS_WEEKS[ACTS_WEEKS.length - 1].n;
+}
+
+// Step by index, not n ± 1, so the adhoc series' stable-but-gappy numbering
+// would stay correct here too (same reasoning as adjacentWeek).
+function devAdjacent(n, dir) {
+  const i = ACTS_WEEKS.findIndex(w => w.n === n);
+  const w = i >= 0 ? ACTS_WEEKS[i + dir] : null;
+  return w ? w.n : null;
+}
+
+/* The Study tab drives where the user lands: its active week, clamped into
+   this series' weeks (Intro lands on Week 1). */
+function devotionWeekFromStudy() {
+  return devClampWeek(typeof activeWeek !== 'undefined' ? activeWeek : 1);
+}
+
+function devotionNavHTML(n) {
+  const prev = devAdjacent(n, -1), next = devAdjacent(n, 1);
+  return `
+    <div class="wk-nav">
+      <button class="wk-nav-btn" ${prev === null ? 'disabled' : ''} onclick="setDevotionWeek(${prev});wkScrollTop()">
+        <span class="material-symbols-rounded">arrow_back</span> ${prev === null ? '' : 'Week ' + prev}
+      </button>
+      <button class="wk-nav-btn" ${next === null ? 'disabled' : ''} onclick="setDevotionWeek(${next});wkScrollTop()">
+        ${next === null ? '' : 'Week ' + next} <span class="material-symbols-rounded">arrow_forward</span>
+      </button>
+    </div>
+  `;
+}
+
+function renderDevotionWeek(n) {
+  const container = document.getElementById('biblicalCards');
+  const w = weekOf(n);
+  if (!container || !w) return;
+  container.innerHTML =
+    '<div class="card biblical-card expanded" data-week="' + n + '">' + devotionCardHTML(w) + '</div>'
+    + devotionNavHTML(n);
+  container.classList.remove('day-fade'); void container.offsetWidth; container.classList.add('day-fade');
+}
+
+function setDevotionWeek(n) {
+  if (typeof isAdhoc === 'function' && isAdhoc()) return;   // adhoc shows its empty card only
+  n = devClampWeek(n);
+  devotionWeek = n;
+  document.querySelectorAll('#devotionChipsScroll .day-chip').forEach(c => {
+    c.classList.toggle('active', parseInt(c.dataset.wk, 10) === n);
+  });
+  const chip = document.querySelector('#devotionChipsScroll .day-chip[data-wk="' + n + '"]');
+  const sc = document.getElementById('devotionChipsScroll');
+  if (chip && sc) wkScrollChips(sc, chip.offsetLeft - (sc.clientWidth - chip.offsetWidth) / 2);
+  renderDevotionWeek(n);
+}
+
 function buildBiblicalCards() {
   const container = document.getElementById('biblicalCards');
+  const sc = document.getElementById('devotionChipsScroll');
   if (!container) return;
   if (typeof isAdhoc === 'function' && isAdhoc()) {
+    if (sc) sc.innerHTML = '';
     container.innerHTML = adhocEmptyCard('Quiet Time');
     return;
   }
-  container.innerHTML = '';
-  ACTS_WEEKS.forEach(w => {
-    const card = document.createElement('div');
-    card.className = 'card biblical-card';
-    card.dataset.week = w.n;
-    card.innerHTML = devotionCardHTML(w);
-    container.appendChild(card);
-  });
+  if (sc) {
+    sc.innerHTML = '';
+    ACTS_WEEKS.forEach(w => {
+      const chip = document.createElement('button');
+      chip.className = 'day-chip day-chip--wk';
+      chip.textContent = 'Wk ' + w.n;
+      chip.dataset.wk = w.n;
+      chip.addEventListener('click', () => { setDevotionWeek(w.n); wkScrollTop(); });
+      sc.appendChild(chip);
+    });
+  }
+  setDevotionWeek(devotionWeekFromStudy());
 }
 
-// Re-render one card in place, preserving whether it is open.
+// Re-render the page when the change touches the week on screen.
 function refreshDevotionCard(n) {
-  const card = document.querySelector('#biblicalCards .biblical-card[data-week="' + n + '"]');
-  const w = weekOf(n);
-  if (!card || !w) return;
-  const wasOpen = card.classList.contains('expanded');
-  card.innerHTML = devotionCardHTML(w);
-  card.classList.toggle('expanded', wasOpen);
+  if (n === devotionWeek) renderDevotionWeek(n);
+}
+
+/* Same axis-locked horizontal swipe the Study tab has. */
+function initDevotionSwipe() {
+  const el = document.getElementById('biblicalCards');
+  if (!el || el._devSwipe) return;
+  el._devSwipe = true;
+  let x0 = null, y0 = null, t0 = 0, lock = null;
+  el.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) { x0 = null; return; }
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); lock = null;
+  }, { passive: true });
+  el.addEventListener('touchmove', (e) => {
+    if (x0 === null) return;
+    const dx = e.touches[0].clientX - x0, dy = e.touches[0].clientY - y0;
+    if (lock === null && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+      lock = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+    }
+  }, { passive: true });
+  el.addEventListener('touchend', (e) => {
+    if (x0 === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0, dt = Date.now() - t0;
+    x0 = null;
+    if (lock === 'h' && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2 && dt < 700) {
+      const target = devAdjacent(devotionWeek, dx < 0 ? 1 : -1);
+      if (target !== null) { setDevotionWeek(target); wkScrollTop(); }
+    }
+  }, { passive: true });
 }
 
 function toggleReading(n, i) {
@@ -14231,17 +14346,9 @@ function openReading(n, i) {
 
 // Jump from the Study tab to this week's Quiet Time card (and back).
 function goToDevotionWeek(n) {
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.nav-tab[data-section="biblical"]').classList.add('active');
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('section-biblical').classList.add('active');
-  activeSection = 'biblical';
-  requestAnimationFrame(fitCardTitles);
-  const card = document.querySelector('#biblicalCards .biblical-card[data-week="' + n + '"]');
-  if (card) {
-    accordionExpand(card);
-    setTimeout(() => scrollCardBelowHeader(card), 60);
-  }
+  goToTab('biblical');
+  setDevotionWeek(n);
+  wkScrollTop();
 }
 
 function goToStudyWeek(n) {
@@ -14963,7 +15070,28 @@ function abAnswerCount(n) {
 }
 function abHasContent(n) { return abHasResp(n) || abAnswerCount(n) > 0; }
 
-/* ── The tab ── */
+/* ── The tab — a week strip across the top (like Study), one practice per
+   page. Every week keeps the framing the owner specified, in this order:
+   1 the "companion to the study" intro · 2 the week's practice ·
+   3 the John 15:5 invitation · 4 the Willard "what is a practice" card. ── */
+function abideCur() {
+  const n = parseInt(abideData.cur, 10);
+  return (n >= 1 && n <= ABIDE_WEEKS.length) ? n : 1;
+}
+
+/* The Study tab drives where the user lands. Abide's twelve weeks parallel the
+   CURRENT study's twelve, so the Study week maps across only while that study
+   is bound; in a past series the tab falls back to the last week viewed here. */
+function abideWeekFromStudy() {
+  if (typeof activeSeries !== 'undefined' && typeof currentSeriesId === 'function'
+      && activeSeries === currentSeriesId()) {
+    const n = parseInt(activeWeek, 10);
+    if (n >= 1) return Math.min(n, ABIDE_WEEKS.length);
+    return 1;   // Intro maps to Week 1
+  }
+  return abideCur();
+}
+
 function abProgressHTML(n) {
   const d = abDays(n);
   return '<div class="ab-progress">'
@@ -14973,6 +15101,50 @@ function abProgressHTML(n) {
     + '</span></div>';
 }
 
+function abIntroCardHTML() {
+  return `
+    <div class="card ins-intro" style="margin-bottom:16px;">
+      <div class="ins-intro-eyebrow">A companion to the study</div>
+      <h2 class="ins-intro-title">Abide</h2>
+      <p class="ins-intro-text">Twelve weeks of spiritual practices, one per week alongside the
+        study &mdash; solitude, fasting, scripture memory, confession, and more. Not novel, and not
+        complicated: practices Christians have kept for centuries, taken up together as a church
+        family.</p>
+    </div>`;
+}
+
+function abInvitationHTML() {
+  return `
+    <div class="memory-verse" style="margin:0 0 16px;">
+      <div class="memory-verse-eyebrow"><span class="material-symbols-rounded">format_quote</span>The Invitation</div>
+      <div class="memory-verse-text">I am the vine; you are the branches. If you remain in me and I in you, you will bear much fruit; apart from me you can do nothing.</div>
+      <div class="memory-verse-ref">John 15:5<span class="memory-verse-ver">NIV</span></div>
+    </div>`;
+}
+
+function abWhatIsHTML() {
+  return `
+    <div class="card" style="margin-bottom:16px;"><div class="card-content">
+      <div class="wk-head"><svg class="ab-vine-ico ab-vine-ico--head" aria-hidden="true" focusable="false"><use href="#vine"/></svg><span>What is a spiritual practice?</span></div>
+      <div class="ab-body" style="padding:0;">
+      <p class="ab-p">In a fast-paced and distracted world, the voice of the Spirit may be hard to
+        hear, and the abiding presence of Jesus may seem impossible to experience. So what should we
+        do? Over these twelve weeks we engage a series of spiritual practices that help us abide in
+        His presence and hear the voice of His Spirit.</p>
+      <p class="ab-p">Committing to a &ldquo;spiritual discipline&rdquo; may sound daunting, but
+        Dallas Willard keeps it simple: <em>&ldquo;Any activity I can do by direct effort that will
+        eventually enable me to do what I currently cannot do by direct effort.&rdquo;</em></p>
+      <p class="ab-p">You are invited to participate as an individual, with a group of friends, with
+        a discipleship group, or in your community group &mdash; so that the Word of God and the
+        Spirit of God, alongside the people of God, may transform our hearts and minds in Christ
+        Jesus. Each week: read the practice, take up the challenge, mark the days you practice, and
+        write down what the Lord is asking of you.</p>
+      </div>
+    </div></div>`;
+}
+
+/* The week's practice, rendered open — the accordion went away with the
+   one-week-per-page layout. */
 function abideWeekCardHTML(w) {
   const n = w.n;
   const intro = w.intro.map(function (p) { return '<p class="ab-p">' + esc(p) + '</p>'; }).join('');
@@ -15020,68 +15192,98 @@ function abideWeekCardHTML(w) {
       + '<span class="cta-label share-btn-label">Share Reflection</span></button>'
     : '<div style="height:14px;"></div>';
 
-  return '<div class="biblical-card-header" onclick="toggleBiblicalCard(this.parentElement)">'
+  return '<div class="card" style="margin-bottom:16px;" data-ab-week="' + n + '">'
+    + '<div class="biblical-card-header" style="cursor:default;">'
     + '<div class="biblical-header-left">'
     + '<div class="biblical-location">' + esc(w.title) + '</div>'
-    + '<div class="biblical-date-badge"><span class="material-symbols-rounded" style="font-size:14px;">spa</span>Week ' + w.roman + '</div>'
+    + '<div class="biblical-date-badge"><svg class="ab-vine-ico" style="width:14px;height:14px;" aria-hidden="true" focusable="false"><use href="#vine"/></svg>Week ' + w.roman + '</div>'
     + '</div></div>'
-    + '<div class="devotion-preview" onclick="toggleBiblicalCard(this.closest(\'.biblical-card\'))">'
     + abProgressHTML(n)
-    + '<div class="devotion-topics-callout"><svg class="ab-vine-ico" aria-hidden="true" focusable="false"><use href="#vine"/></svg>'
-    + 'The practice, the challenge &amp; your response'
-    + '<span class="material-symbols-rounded devotion-topics-chev biblical-chevron">expand_more</span></div>'
-    + '</div>'
-    + '<div class="biblical-body"><div class="ab-body">'
-    + intro + steps + practical + prayer + note + challenge + respond
-    + '</div>' + discussion + share + '</div>';
+    + '<div class="ab-body">' + intro + steps + practical + prayer + note + challenge + respond + '</div>'
+    + discussion + share + '</div>';
+}
+
+function abideNavHTML(n) {
+  const prev = n > 1 ? n - 1 : null;
+  const next = n < ABIDE_WEEKS.length ? n + 1 : null;
+  return '<div class="wk-nav">'
+    + '<button class="wk-nav-btn" ' + (prev === null ? 'disabled' : '') + ' onclick="setAbideWeek(' + prev + ');wkScrollTop()">'
+    + '<span class="material-symbols-rounded">arrow_back</span> ' + (prev === null ? '' : 'Week ' + prev) + '</button>'
+    + '<button class="wk-nav-btn" ' + (next === null ? 'disabled' : '') + ' onclick="setAbideWeek(' + next + ');wkScrollTop()">'
+    + (next === null ? '' : 'Week ' + next) + ' <span class="material-symbols-rounded">arrow_forward</span></button>'
+    + '</div>';
+}
+
+function renderAbideWeek(n) {
+  const c = document.getElementById('abideCards');
+  const w = ABIDE_WEEKS.find(function (x) { return x.n === n; });
+  if (!c || !w) return;
+  c.innerHTML = abIntroCardHTML() + abideWeekCardHTML(w) + abInvitationHTML() + abWhatIsHTML() + abideNavHTML(n);
+  c.classList.remove('day-fade'); void c.offsetWidth; c.classList.add('day-fade');
+}
+
+function setAbideWeek(n) {
+  if (!(n >= 1 && n <= ABIDE_WEEKS.length)) n = 1;
+  abideData.cur = n;
+  abPersist();
+  document.querySelectorAll('#abideChipsScroll .day-chip').forEach(function (ch) {
+    ch.classList.toggle('active', parseInt(ch.dataset.wk, 10) === n);
+  });
+  const chip = document.querySelector('#abideChipsScroll .day-chip[data-wk="' + n + '"]');
+  const sc = document.getElementById('abideChipsScroll');
+  if (chip && sc && typeof wkScrollChips === 'function') {
+    wkScrollChips(sc, chip.offsetLeft - (sc.clientWidth - chip.offsetWidth) / 2);
+  }
+  renderAbideWeek(n);
 }
 
 function buildAbideCards() {
-  const container = document.getElementById('abideCards');
-  if (!container || typeof ABIDE_WEEKS === 'undefined') return;
-  const intro = `
-    <div class="card ins-intro">
-      <div class="ins-intro-eyebrow">A companion to the study</div>
-      <h2 class="ins-intro-title">Abide</h2>
-      <p class="ins-intro-text">Twelve weeks of spiritual practices, one per week alongside the
-        study &mdash; solitude, fasting, scripture memory, confession, and more. Not novel, and not
-        complicated: practices Christians have kept for centuries, taken up together as a church
-        family.</p>
-    </div>
-    <div class="memory-verse" style="margin:0 0 14px;">
-      <div class="memory-verse-eyebrow"><span class="material-symbols-rounded">format_quote</span>The Invitation</div>
-      <div class="memory-verse-text">I am the vine; you are the branches. If you remain in me and I in you, you will bear much fruit; apart from me you can do nothing.</div>
-      <div class="memory-verse-ref">John 15:5<span class="memory-verse-ver">NIV</span></div>
-    </div>
-    <div class="card" style="margin-bottom:16px;"><div class="card-content">
-      <div class="wk-head"><svg class="ab-vine-ico ab-vine-ico--head" aria-hidden="true" focusable="false"><use href="#vine"/></svg><span>What is a spiritual practice?</span></div>
-      <div class="ab-body" style="padding:0;">
-      <p class="ab-p">In a fast-paced and distracted world, the voice of the Spirit may be hard to
-        hear, and the abiding presence of Jesus may seem impossible to experience. So what should we
-        do? Over these twelve weeks we engage a series of spiritual practices that help us abide in
-        His presence and hear the voice of His Spirit.</p>
-      <p class="ab-p">Committing to a &ldquo;spiritual discipline&rdquo; may sound daunting, but
-        Dallas Willard keeps it simple: <em>&ldquo;Any activity I can do by direct effort that will
-        eventually enable me to do what I currently cannot do by direct effort.&rdquo;</em></p>
-      <p class="ab-p">You are invited to participate as an individual, with a group of friends, with
-        a discipleship group, or in your community group &mdash; so that the Word of God and the
-        Spirit of God, alongside the people of God, may transform our hearts and minds in Christ
-        Jesus. Each week: read the practice, take up the challenge, mark the days you practice, and
-        write down what the Lord is asking of you.</p>
-      </div>
-    </div></div>`;
-  container.innerHTML = intro + ABIDE_WEEKS.map(function (w) {
-    return '<div class="card biblical-card" data-ab-week="' + w.n + '">' + abideWeekCardHTML(w) + '</div>';
-  }).join('');
+  const sc = document.getElementById('abideChipsScroll');
+  if (sc && typeof ABIDE_WEEKS !== 'undefined') {
+    sc.innerHTML = '';
+    ABIDE_WEEKS.forEach(function (w) {
+      const chip = document.createElement('button');
+      chip.className = 'day-chip day-chip--wk' + (w.n === abideCur() ? ' active' : '');
+      chip.textContent = 'Wk ' + w.n;
+      chip.dataset.wk = w.n;
+      chip.addEventListener('click', function () { setAbideWeek(w.n); if (typeof wkScrollTop === 'function') wkScrollTop(); });
+      sc.appendChild(chip);
+    });
+  }
+  renderAbideWeek(abideCur());
+}
+
+/* Same axis-locked horizontal swipe the Study tab has. */
+function initAbideSwipe() {
+  const el = document.getElementById('abideCards');
+  if (!el || el._abSwipe) return;
+  el._abSwipe = true;
+  let x0 = null, y0 = null, t0 = 0, lock = null;
+  el.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) { x0 = null; return; }
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); lock = null;
+  }, { passive: true });
+  el.addEventListener('touchmove', function (e) {
+    if (x0 === null) return;
+    const dx = e.touches[0].clientX - x0, dy = e.touches[0].clientY - y0;
+    if (lock === null && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+      lock = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+    }
+  }, { passive: true });
+  el.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0, dt = Date.now() - t0;
+    x0 = null;
+    if (lock === 'h' && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2 && dt < 700) {
+      const target = abideCur() + (dx < 0 ? 1 : -1);
+      if (target >= 1 && target <= ABIDE_WEEKS.length) { setAbideWeek(target); wkScrollTop(); }
+    }
+  }, { passive: true });
 }
 
 function refreshAbideCard(n) {
-  const card = document.querySelector('#abideCards .biblical-card[data-ab-week="' + n + '"]');
-  const w = ABIDE_WEEKS.find(function (x) { return x.n === n; });
-  if (!card || !w) return;
-  const wasOpen = card.classList.contains('expanded');
-  card.innerHTML = abideWeekCardHTML(w);
-  card.classList.toggle('expanded', wasOpen);
+  if (n === abideCur()) renderAbideWeek(n);
 }
 
 /* Day circles: flip in place — no full re-render while the card is open. */
@@ -15094,7 +15296,7 @@ function abToggleDay(n, i, btn) {
   btn.setAttribute('aria-pressed', d[i] ? 'true' : 'false');
   const cap = document.querySelector('[data-ab-cap="' + n + '"]');
   if (cap) cap.textContent = abDayCount(n) + ' of 7 days practiced';
-  const card = document.querySelector('#abideCards .biblical-card[data-ab-week="' + n + '"] .ab-progress');
+  const card = document.querySelector('#abideCards [data-ab-week="' + n + '"] .ab-progress');
   if (card) card.outerHTML = abProgressHTML(n);
 }
 
@@ -15111,7 +15313,7 @@ function abRespSave(el) {
   if ((abideData.resp[n] || '') === el.value) return;
   abideData.resp[n] = el.value;
   abPersist();
-  const card = document.querySelector('#abideCards .biblical-card[data-ab-week="' + n + '"] .ab-progress');
+  const card = document.querySelector('#abideCards [data-ab-week="' + n + '"] .ab-progress');
   if (card) card.outerHTML = abProgressHTML(n);
 }
 
@@ -15235,11 +15437,15 @@ function init() {
   buildDestinationChips();
   buildWeekChips();
   initWeekSwipe();
+  if (typeof calendarStudyWeek === 'function' && typeof currentSeriesId === 'function'
+      && activeSeries === currentSeriesId()) activeWeek = calendarStudyWeek();
   setActiveWeek(activeWeek);
   if (typeof updateSeriesChrome === 'function') updateSeriesChrome();
   buildBiblicalCards();
   buildExploreCards();
   if (typeof buildAbideCards === 'function') buildAbideCards();
+  if (typeof initAbideSwipe === 'function') initAbideSwipe();
+  if (typeof initDevotionSwipe === 'function') initDevotionSwipe();
   requestAnimationFrame(fitCardTitles);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitCardTitles);
   let _fitT;
