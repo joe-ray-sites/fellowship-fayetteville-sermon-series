@@ -14287,34 +14287,43 @@ let devotionWeek = 0;
 function devClampWeek(n) {
   if (!ACTS_WEEKS.length) return 0;
   n = parseInt(n, 10);
+  if (n === 0) return 0;                                // the Intro page
   if (ACTS_WEEKS.some(w => w.n === n)) return n;
-  if (!(n > ACTS_WEEKS[0].n)) return ACTS_WEEKS[0].n;   // Intro (0) and NaN land on the first week
+  if (!(n > ACTS_WEEKS[0].n)) return ACTS_WEEKS[0].n;   // NaN lands on the first week
   return ACTS_WEEKS[ACTS_WEEKS.length - 1].n;
 }
 
 // Step by index, not n ± 1, so the adhoc series' stable-but-gappy numbering
 // would stay correct here too (same reasoning as adjacentWeek).
 function devAdjacent(n, dir) {
+  if (dir < 0) {
+    if (n === 0) return null;
+    const i = ACTS_WEEKS.findIndex(w => w.n === n);
+    return i <= 0 ? 0 : ACTS_WEEKS[i - 1].n;
+  }
+  if (n === 0) return ACTS_WEEKS.length ? ACTS_WEEKS[0].n : null;
   const i = ACTS_WEEKS.findIndex(w => w.n === n);
   const w = i >= 0 ? ACTS_WEEKS[i + dir] : null;
   return w ? w.n : null;
 }
 
 /* The Study tab drives where the user lands: its active week, clamped into
-   this series' weeks (Intro lands on Week 1). */
+   this series' weeks. Study's Intro lands on the Devotion Intro — the
+   Personal Bible Study introduction. */
 function devotionWeekFromStudy() {
   return devClampWeek(typeof activeWeek !== 'undefined' ? activeWeek : 1);
 }
 
 function devotionNavHTML(n) {
   const prev = devAdjacent(n, -1), next = devAdjacent(n, 1);
+  const label = k => (k === null ? '' : k === 0 ? 'Intro' : 'Week ' + k);
   return `
     <div class="wk-nav">
       <button class="wk-nav-btn" ${prev === null ? 'disabled' : ''} onclick="setDevotionWeek(${prev});wkScrollTop()">
-        <span class="material-symbols-rounded">arrow_back</span> ${prev === null ? '' : 'Week ' + prev}
+        <span class="material-symbols-rounded">arrow_back</span> ${label(prev)}
       </button>
       <button class="wk-nav-btn" ${next === null ? 'disabled' : ''} onclick="setDevotionWeek(${next});wkScrollTop()">
-        ${next === null ? '' : 'Week ' + next} <span class="material-symbols-rounded">arrow_forward</span>
+        ${label(next)} <span class="material-symbols-rounded">arrow_forward</span>
       </button>
     </div>
   `;
@@ -14322,8 +14331,22 @@ function devotionNavHTML(n) {
 
 function renderDevotionWeek(n) {
   const container = document.getElementById('biblicalCards');
+  if (!container) return;
+  if (n === 0) {
+    const src = document.querySelector('#pbs-overlay .guide-inner');
+    if (!src && document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        if (devotionWeek === 0) renderDevotionWeek(0);
+      }, { once: true });
+    }
+    container.innerHTML = '<div class="intro-page">'
+      + (src ? src.innerHTML.replace('id="pbs-title"', '') : '')
+      + '</div>' + devotionNavHTML(0);
+    container.classList.remove('day-fade'); void container.offsetWidth; container.classList.add('day-fade');
+    return;
+  }
   const w = weekOf(n);
-  if (!container || !w) return;
+  if (!w) return;
   container.innerHTML =
     '<div class="card biblical-card expanded" data-week="' + n + '">' + devotionCardHTML(w) + '</div>'
     + devotionNavHTML(n);
@@ -14354,14 +14377,16 @@ function buildBiblicalCards() {
   }
   if (sc) {
     sc.innerHTML = '';
-    ACTS_WEEKS.forEach(w => {
+    const mk = (label, wk) => {
       const chip = document.createElement('button');
       chip.className = 'day-chip day-chip--wk';
-      chip.textContent = 'Wk ' + w.n;
-      chip.dataset.wk = w.n;
-      chip.addEventListener('click', () => { setDevotionWeek(w.n); wkScrollTop(); });
+      chip.textContent = label;
+      chip.dataset.wk = wk;
+      chip.addEventListener('click', () => { setDevotionWeek(wk); wkScrollTop(); });
       sc.appendChild(chip);
-    });
+    };
+    mk('Intro', 0);
+    ACTS_WEEKS.forEach(w => mk('Wk ' + w.n, w.n));
   }
   setDevotionWeek(devotionWeekFromStudy());
 }
