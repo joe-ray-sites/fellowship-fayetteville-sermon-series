@@ -11340,12 +11340,37 @@ function _loadEditor(el, stored) {
   if (!stored) el.innerHTML = '';
   else if (_looksRich(stored)) el.innerHTML = stored;
   else el.innerHTML = esc(stored).replace(/\n/g, '<br>');
+  // A note whose only content is the mirrored Scripture Notes block leaves the
+  // caret nowhere to go — the block is contenteditable=false, so with nothing
+  // editable in the sheet, typing is dead (hit on iOS with a verse note made
+  // before any sermon notes). Pin the block at the BOTTOM and guarantee an
+  // editable paragraph above it for the user's own notes.
+  const autos = el.querySelectorAll('[data-auto-scripture]');
+  if (autos.length) {
+    autos.forEach(function (a) { el.appendChild(a); });
+    const first = el.firstChild;
+    if (first && first.nodeType === 1 && first.hasAttribute('data-auto-scripture')) {
+      const p = document.createElement('div');
+      p.innerHTML = '<br>';
+      el.insertBefore(p, first);
+    }
+  }
   _refreshEmpty(el);
 }
 
 // Normalised value to store: '' when effectively empty, else the HTML.
+// The mirrored Scripture Notes block stays pinned at the end of the stored
+// HTML, whatever order the caret left things in.
 function _editorValue(el) {
-  return _htmlHasContent(el.innerHTML) ? el.innerHTML : '';
+  let html = el.innerHTML;
+  if (html.indexOf('data-auto-scripture') !== -1) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    const autos = tmp.querySelectorAll('[data-auto-scripture]');
+    autos.forEach(function (a) { tmp.appendChild(a); });
+    html = tmp.innerHTML;
+  }
+  return _htmlHasContent(html) ? html : '';
 }
 
 function _refreshEmpty(el) {
