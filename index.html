@@ -962,6 +962,7 @@ main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
   margin-top: 16px; padding: 12px 14px;
   border-radius: 10px; border: 1px solid var(--md-sys-color-outline-variant);
   background: var(--devotion-gold-bg);
+  -webkit-user-select: none; user-select: none;
 }
 .vn-auto-head {
   font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
@@ -11355,7 +11356,54 @@ function _loadEditor(el, stored) {
       el.insertBefore(p, first);
     }
   }
+  if (!el._autoCaretWired) {
+    el._autoCaretWired = true;
+    el.addEventListener('click', _guardAutoCaret);
+  }
   _refreshEmpty(el);
+}
+
+/* Seat the caret at the end of the user's own writing, just above the pinned
+   Scripture Notes block. iOS WebKit will not reliably place a caret from a tap
+   that lands on — or in the dead space after — a contenteditable=false block,
+   which left the sheet focused with a keyboard up and nowhere to type. */
+function _caretToUserArea(ed) {
+  const auto = ed.querySelector('[data-auto-scripture]');
+  if (!auto) return;
+  let target = auto.previousSibling;
+  if (!target) {
+    target = document.createElement('div');
+    target.innerHTML = '<br>';
+    ed.insertBefore(target, auto);
+  }
+  try {
+    const r = document.createRange();
+    if (target.nodeType === 1) r.selectNodeContents(target);
+    else r.selectNode(target);
+    r.collapse(false);
+    const sel = getSelection();
+    sel.removeAllRanges();
+    sel.addRange(r);
+  } catch (e) {}
+}
+
+// After any tap, if the selection landed inside the pinned block, after it,
+// or nowhere at all, move it back into the writable area.
+function _guardAutoCaret(e) {
+  const ed = e.currentTarget;
+  const auto = ed.querySelector('[data-auto-scripture]');
+  if (!auto) return;
+  const sel = getSelection();
+  let bad = !sel.rangeCount || !ed.contains(sel.anchorNode);
+  if (!bad) {
+    const n = sel.anchorNode;
+    if (auto.contains(n)) bad = true;
+    else if (n === ed) {
+      const idx = Array.prototype.indexOf.call(ed.childNodes, auto);
+      if (idx !== -1 && sel.anchorOffset >= idx) bad = true;
+    }
+  }
+  if (bad || auto.contains(e.target)) _caretToUserArea(ed);
 }
 
 // Normalised value to store: '' when effectively empty, else the HTML.
@@ -11763,7 +11811,7 @@ function openNotesModal(key, title, suffix) {
   document.getElementById('notes-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
   requestAnimationFrame(_fitSheets);
-  setTimeout(function () { ed.focus(); }, 150);
+  setTimeout(function () { ed.focus(); _caretToUserArea(ed); }, 150);
 }
 
 function closeNotesModal() {
