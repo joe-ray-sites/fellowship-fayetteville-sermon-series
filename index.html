@@ -3389,6 +3389,20 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
 .insights-inner { max-width: 640px; margin: 0 auto; }
 #insights-overlay .guide-body { padding: 14px 14px 64px; }
 
+/* ── DOWNLOAD THE APP — install walkthrough ── */
+.inst-img {
+  display: block; width: 100%; max-width: 380px; margin: 14px auto 0;
+  border-radius: 14px; border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--md-sys-elevation-1);
+}
+.inst-note {
+  margin-top: 36px; padding: 12px 14px; border-radius: 10px;
+  background: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 13.5px; line-height: 1.55;
+}
+.inst-install-btn { margin: 4px 0 8px; }
+
 /* ── COLORBLIND MODE — pure black & white, no colour and no shading.
    html[data-mono="1"] is set before first paint (head script, acts-mono) and
    toggled from the header menu. The token override covers everything the
@@ -3619,6 +3633,9 @@ html[data-mono="1"] body[data-series="upperroom"] .cta-btn { background: #FFFFFF
   </button>
   <button class="header-menu-item" onclick="toggleMono()" role="menuitem">
     <span class="material-symbols-rounded">contrast</span><span id="monoLabel">Colorblind Mode</span>
+  </button>
+  <button class="header-menu-item" id="installMenuItem" onclick="closeHeaderMenu(); openInstall();" role="menuitem">
+    <span class="material-symbols-rounded">install_mobile</span><span>Download the App</span>
   </button>
   <button class="header-menu-item" onclick="closeHeaderMenu(); openGuide();" role="menuitem">
     <span class="material-symbols-rounded">help</span><span>How to Use This Guide</span>
@@ -14732,6 +14749,54 @@ function setCtaImages(id) {
 }
 
 /* ── Introduction to Personal Bible Study (header menu) ── */
+/* ── Download the App ────────────────────────────────────────────────────
+   iOS has no install API — a page cannot press Safari's Share button — so iOS
+   gets the screenshot walkthrough. Chromium fires beforeinstallprompt; the
+   event is held and offered as a genuine one-tap Install button (an event's
+   prompt() is single-use, so it is nulled once spent). The menu item hides
+   entirely when the app is already running from the Home Screen. */
+function isStandalone() {
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+    || window.navigator.standalone === true;
+}
+let _installPrompt = null;
+window.addEventListener('beforeinstallprompt', function (e) {
+  e.preventDefault();
+  _installPrompt = e;
+});
+function openInstall() {
+  const el = document.getElementById('install-overlay');
+  if (!el) return;
+  const nb = document.getElementById('install-native');
+  if (nb) nb.style.display = _installPrompt ? 'block' : 'none';
+  const body = document.getElementById('install-body');
+  if (body) body.scrollTop = 0;
+  el.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeInstall() {
+  const el = document.getElementById('install-overlay');
+  if (!el) return;
+  el.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function installNative() {
+  if (!_installPrompt) return;
+  const p = _installPrompt;
+  _installPrompt = null;   // prompt() is single-use
+  p.prompt();
+  p.userChoice.then(function (c) {
+    const nb = document.getElementById('install-native');
+    if (nb) nb.style.display = 'none';
+    if (c && c.outcome === 'accepted') closeInstall();
+  }).catch(function () {});
+}
+// Already installed -> the menu item has no job; hide it.
+if (isStandalone()) {
+  const _imi = document.getElementById('installMenuItem');
+  if (_imi) _imi.style.display = 'none';
+}
+
 function openPbs() {
   const el = document.getElementById('pbs-overlay');
   if (!el) return;
@@ -14791,6 +14856,8 @@ document.addEventListener('keydown', function (e) {
   if (sp && sp.classList.contains('open')) closeSpectra();
   const pb = document.getElementById('pbs-overlay');
   if (pb && pb.classList.contains('open')) closePbs();
+  const iv = document.getElementById('install-overlay');
+  if (iv && iv.classList.contains('open')) closeInstall();
   const io = document.getElementById('insights-overlay');
   if (io && io.classList.contains('open')) closeInsightsPage();
 });
@@ -15941,6 +16008,53 @@ function _onCtaScroll() {
      HOW TO USE THIS GUIDE  (header menu)
      Text is the study journal's own front matter, printed pages 10-11.
      ==================================================================== -->
+<!-- Download the App — installing the PWA. iOS has no install API (a page
+     cannot press Safari's Share button or drive its sheet), so iOS gets a
+     guided walkthrough with the owner's own screenshots; Chromium browsers
+     get the real one-tap prompt via beforeinstallprompt. -->
+<div id="install-overlay" class="guide-overlay" role="dialog" aria-modal="true" aria-labelledby="install-title">
+  <div class="guide-app-bar">
+    <button class="icon-btn" onclick="closeInstall()" aria-label="Back">
+      <span class="material-symbols-rounded">arrow_back</span>
+    </button>
+    <span class="guide-app-bar-title">Download the App</span>
+  </div>
+  <div class="guide-body" id="install-body">
+    <div class="guide-inner">
+      <div class="guide-eyebrow">Fellowship Fayetteville</div>
+      <h1 class="guide-display" id="install-title">Download<br>the App</h1>
+      <p class="guide-lead">This app installs straight from your browser &mdash; no App Store needed. Three taps put it on your Home Screen with its own icon, full screen, ready to open like any other app.</p>
+
+      <div id="install-native" style="display:none;">
+        <button class="cta-btn inst-install-btn" type="button" onclick="installNative()">
+          <span class="material-symbols-rounded">install_mobile</span>&nbsp;Install Now
+        </button>
+        <p class="guide-p">Your browser supports one-tap install &mdash; or follow the steps below.</p>
+      </div>
+
+      <div class="pbs-step">
+        <div class="pbs-head"><span class="pbs-num">01</span><span class="pbs-q">Open the Share menu</span></div>
+        <p class="guide-p">In Safari, tap the <strong>Share</strong> button &mdash; the square with the arrow at the bottom of the screen &mdash; then tap <strong>View More</strong>.</p>
+        <img class="inst-img" src="assets/install/install-1.jpg" loading="lazy" alt="The Safari share sheet, with View More at the bottom right">
+      </div>
+
+      <div class="pbs-step">
+        <div class="pbs-head"><span class="pbs-num">02</span><span class="pbs-q">Add to Home Screen</span></div>
+        <p class="guide-p">In the expanded list, tap <strong>Add to Home Screen</strong>.</p>
+        <img class="inst-img" src="assets/install/install-2.jpg" loading="lazy" alt="The expanded share sheet, with Add to Home Screen in the list">
+      </div>
+
+      <div class="pbs-step">
+        <div class="pbs-head"><span class="pbs-num">03</span><span class="pbs-q">Tap Add</span></div>
+        <p class="guide-p">Leave <strong>Open as Web App</strong> switched on, then tap <strong>Add</strong>. The Fellowship icon appears on your Home Screen.</p>
+        <img class="inst-img" src="assets/install/install-3.jpg" loading="lazy" alt="The Add to Home Screen confirmation, with the Add button at the top right">
+      </div>
+
+      <p class="inst-note">Using Chrome or another browser on your iPhone? The same option is in its menu. If this page opened inside another app &mdash; Messages, Instagram, Mail &mdash; open it in Safari first.</p>
+    </div>
+  </div>
+</div>
+
 <!-- Introduction to Personal Bible Study — the Training Center's three
      inductive-method videos. Reuses the guide overlay's slide mechanics. -->
 <div id="pbs-overlay" class="guide-overlay" role="dialog" aria-modal="true" aria-labelledby="pbs-title">
