@@ -3402,6 +3402,7 @@ body[data-series="upperroom"] .cta-btn:hover { background: var(--journal-red-hov
   font-size: 13.5px; line-height: 1.55;
 }
 .inst-install-btn { margin: 4px 0 8px; }
+.home-install { display: flex; justify-content: center; padding: 10px 20px 36px; }
 
 /* ── COLORBLIND MODE — pure black & white, no colour and no shading.
    html[data-mono="1"] is set before first paint (head script, acts-mono) and
@@ -3745,6 +3746,12 @@ html[data-mono="1"] body[data-series="upperroom"] .cta-btn { background: #FFFFFF
         <p class="cta-text reveal-item">Teaching and conversation for the drive, the walk, or the quiet part of the morning &mdash; the message brought close enough to hear.</p>
         <button class="cta-btn reveal-item" type="button" onclick="goToTab('podcasts')">Start Listening <span class="material-symbols-rounded">arrow_forward</span></button>
       </div>
+    </div>
+
+    <div class="home-install" id="homeInstallBtn">
+      <button class="cta-btn" type="button" onclick="openInstall()">
+        <span class="material-symbols-rounded">install_mobile</span>&nbsp;Download the App
+      </button>
     </div>
 
   </section>
@@ -14791,10 +14798,12 @@ function installNative() {
     if (c && c.outcome === 'accepted') closeInstall();
   }).catch(function () {});
 }
-// Already installed -> the menu item has no job; hide it.
+// Already installed -> the install entry points have no job; hide them.
 if (isStandalone()) {
   const _imi = document.getElementById('installMenuItem');
   if (_imi) _imi.style.display = 'none';
+  const _hib = document.getElementById('homeInstallBtn');
+  if (_hib) _hib.style.display = 'none';
 }
 
 function openPbs() {
@@ -16023,8 +16032,6 @@ function _onCtaScroll() {
     <div class="guide-inner">
       <div class="guide-eyebrow">Fellowship Fayetteville</div>
       <h1 class="guide-display" id="install-title">Download<br>the App</h1>
-      <p class="guide-lead">This app installs straight from your browser &mdash; no App Store needed. Three taps put it on your Home Screen with its own icon, full screen, ready to open like any other app.</p>
-
       <div id="install-native" style="display:none;">
         <button class="cta-btn inst-install-btn" type="button" onclick="installNative()">
           <span class="material-symbols-rounded">install_mobile</span>&nbsp;Install Now
