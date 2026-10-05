@@ -2449,6 +2449,8 @@ main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 }
 .header-menu-item .material-symbols-rounded { font-size: 22px; color: var(--md-sys-color-primary); flex-shrink: 0; }
 .header-menu-item:active { background: var(--md-sys-color-surface-variant); }
+a.header-menu-item { text-decoration: none; box-sizing: border-box; }
+.header-menu-item .hm-ext { margin-left: auto; font-size: 18px; color: var(--md-sys-color-on-surface-variant); }
 @media (hover: hover) { .header-menu-item:hover { background: var(--md-sys-color-surface-variant); } }
 .np-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--md-sys-color-primary); }
 .np-title { font-size: 15px; font-weight: 600; color: var(--md-sys-color-on-surface); margin: 2px 0 12px; }
@@ -3650,6 +3652,10 @@ html[data-mono="1"] body[data-series="upperroom"] .cta-btn { background: #FFFFFF
   <button class="header-menu-item" onclick="closeHeaderMenu(); openInsightsPage();" role="menuitem">
     <span class="material-symbols-rounded">lightbulb</span><span>Insights</span>
   </button>
+  <a class="header-menu-item" href="https://fellowshipfayetteville.org/faybulletin" target="_blank" rel="noopener" onclick="closeHeaderMenu();" role="menuitem">
+    <span class="material-symbols-rounded">newspaper</span><span>Fayetteville Bulletin</span>
+    <span class="material-symbols-rounded hm-ext">open_in_new</span>
+  </a>
   <button class="header-menu-item" onclick="closeHeaderMenu(); openShelf();" role="menuitem">
     <span class="material-symbols-rounded">auto_stories</span><span>Past Sermon Series</span>
   </button>
@@ -14147,6 +14153,8 @@ function weekNavHTML(n) {
   `;
 }
 
+const FAY_BULLETIN_URL = 'https://fellowshipfayetteville.org/faybulletin';
+
 function renderWeekDetail(n) {
   const container = document.getElementById('dayDetail');
   if (!container) return;
@@ -14213,24 +14221,30 @@ function renderWeekDetail(n) {
     </div>` : ''}
 
     ${(function () {
-      // The Going Deeper chapter essays used to be reachable only on the
-      // Insights page; with that page moved to the menu, the Study week they
-      // conclude links to them directly. Only upperroom ships gd_john* keys,
-      // so other series simply render nothing here.
+      // Every week carries a Going Deeper card for the church's Fayetteville
+      // Bulletin. The chapter essays (upperroom gd_john* keys only) are linked
+      // first on the week that concludes each chapter.
       const ch = ({ 3: 13, 5: 14, 7: 15, 10: 16, 12: 17 })[n];
       const gd = ch && typeof ACTS_INSIGHTS !== 'undefined'
         ? ACTS_INSIGHTS.find(x => String(x.wk) === 'gd_john' + ch) : null;
-      return gd ? `<div class="card" style="margin-bottom:16px;">
+      return `<div class="card" style="margin-bottom:16px;">
       <div class="card-content">
         <div class="wk-head"><span class="material-symbols-rounded wk-head-icon">history_edu</span><span>Going Deeper</span></div>
-        <div class="wk-sub">A chapter-level essay on John ${ch} &mdash; the study behind these weeks.</div>
-        <button class="card-cta card-cta--gold" onclick="openInsight('${gd.wk}')">
+        <div class="wk-sub">${gd
+          ? `A chapter-level essay on John ${ch} &mdash; the study behind these weeks &mdash; and this week&rsquo;s Fayetteville Bulletin.`
+          : 'This week&rsquo;s news and happenings from Fellowship Fayetteville.'}</div>
+        ${gd ? `<button class="card-cta card-cta--gold" onclick="openInsight('${gd.wk}')">
           <span class="material-symbols-rounded cta-lead">article</span>
           <span class="cta-label">${esc(gd.title)}</span>
           <span class="material-symbols-rounded cta-arrow">arrow_forward</span>
-        </button>
+        </button>` : ''}
+        <a class="card-cta" href="${FAY_BULLETIN_URL}" target="_blank" rel="noopener">
+          <span class="material-symbols-rounded cta-lead">newspaper</span>
+          <span class="cta-label">Fayetteville Bulletin</span>
+          <span class="material-symbols-rounded cta-arrow">open_in_new</span>
+        </a>
       </div>
-    </div>` : '';
+    </div>`;
     })()}
 
     <div class="card" style="margin-bottom:16px;">
